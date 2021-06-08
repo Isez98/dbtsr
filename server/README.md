@@ -5,6 +5,6 @@
 * You should have node installed
 * You should have yarn installed
 ```sh
-`$` yarn watch
-`$` yarn dev
+yarn watch
+yarn dev
 ```
