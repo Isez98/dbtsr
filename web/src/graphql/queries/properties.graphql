@@ -1,0 +1,8 @@
+query Properties {
+  properties {
+    updatedAt
+    createdAt
+    designation
+    id
+  }
+}

@@ -11,7 +11,8 @@ import {
   Query,
 } from "type-graphql";
 import argon2 from "argon2";
-import { EntityManager } from '@mikro-orm/postgresql'
+import { EntityManager } from "@mikro-orm/postgresql";
+import { COOKIE_NAME } from "src/constants";
 
 @InputType()
 class EmailAndPasswordInput {
@@ -42,9 +43,7 @@ class UserResponse {
 @Resolver()
 export class UserResolver {
   @Query(() => [User])
-  users(
-    @Ctx() {em}: MyContext) : Promise<User[]>
-  {
+  users(@Ctx() { em }: MyContext): Promise<User[]> {
     return em.find(User, {});
   }
 
@@ -89,15 +88,19 @@ export class UserResolver {
     let user;
     try {
       // Insert manual SQL
-      const result = await (em as EntityManager).createQueryBuilder(User).getKnexQuery().insert({
-        email: options.email,
-        password: hashedPassword,
-        created_at: new Date(),
-        updated_at: new Date(),
-      }).returning('*');
+      const result = await (em as EntityManager)
+        .createQueryBuilder(User)
+        .getKnexQuery()
+        .insert({
+          email: options.email,
+          password: hashedPassword,
+          created_at: new Date(),
+          updated_at: new Date(),
+        })
+        .returning("*");
       user = result[0];
     } catch (error) {
-      if (error.code === '23505') {
+      if (error.code === "23505") {
         return {
           errors: [
             {
@@ -153,5 +156,20 @@ export class UserResolver {
     return {
       user,
     };
+  }
+
+  @Mutation(() => Boolean)
+  logout(@Ctx() { req, res }: MyContext) {
+    return new Promise((resolve) =>
+      req.session.destroy((err) => {
+        res.clearCookie(COOKIE_NAME);
+        if (err) {
+          console.log(err);
+          resolve(false);
+          return;
+        }
+        resolve(true);
+      })
+    );
   }
 }

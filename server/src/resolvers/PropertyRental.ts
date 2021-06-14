@@ -2,12 +2,15 @@ import { PropertyRental } from "../entities/PropertyRental";
 import { MyContext } from "src/types";
 import { Resolver, Query, Ctx, Arg, Int, Mutation } from "type-graphql";
 
+const sleep = (ms: number) => new Promise(res => setTimeout(res, ms))
+
 @Resolver()
 export class PropertyRentalResolver {
   @Query(() => [PropertyRental])
-  properties(
+  async properties(
     @Ctx() {em}: MyContext) : Promise<PropertyRental[]>
   {
+    await sleep(3000)
     return em.find(PropertyRental, {});
   }
 
