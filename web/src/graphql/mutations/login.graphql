@@ -1,5 +1,0 @@
-mutation Login($options: EmailAndPasswordInput!) {
-  login(options: $options) {
-    ...RegularUserResponse
-  }
-}

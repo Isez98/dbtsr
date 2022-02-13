@@ -1,65 +1,72 @@
 import { PropertyRental } from "../entities/PropertyRental";
-import { MyContext } from "src/types";
-import { Resolver, Query, Ctx, Arg, Int, Mutation } from "type-graphql";
+import {
+  Resolver,
+  Query,
+  Arg,
+  Int,
+  Mutation,
+  InputType,
+  Field,
+} from "type-graphql";
+
+@InputType()
+class PropertyInput {
+  @Field()
+  designation: string;
+
+  @Field()
+  album: string;
+
+  @Field()
+  notes: string;
+}
 
 @Resolver()
 export class PropertyRentalResolver {
   @Query(() => [PropertyRental])
-  async properties(
-    @Ctx() {em}: MyContext) : Promise<PropertyRental[]>
-  {
-    return em.find(PropertyRental, {});
+  async properties(): Promise<PropertyRental[]> {
+    return PropertyRental.find();
   }
 
-  @Query(() => PropertyRental, {nullable: true})
+  @Query(() => PropertyRental, { nullable: true })
   property(
-    @Arg('id', () => Int) id: number,
-    @Ctx() {em}: MyContext
-    ) : Promise<PropertyRental | null>
-  {
-    return em.findOne(PropertyRental, {id});
+    @Arg("id", () => Int) id: number
+  ): Promise<PropertyRental | undefined> {
+    return PropertyRental.findOne(id);
   }
 
   @Mutation(() => PropertyRental)
   async createProperty(
-    @Arg('designation') designation: string,
-    @Ctx() {em}: MyContext
-    ) : Promise<PropertyRental>
-  {
-    const property = em.create(PropertyRental, {designation});
-    await em.persistAndFlush(property);
+    @Arg("input") input: PropertyInput
+  ): Promise<PropertyRental> {
+    // 2 SQL queries
+    return PropertyRental.create({
+      ...input,
+    }).save();
+  }
+
+  @Mutation(() => PropertyRental, { nullable: true })
+  async updateProperty(
+    @Arg("id") id: number,
+    // note: can make fields optional to update. Example => @Arg('designation', () => String, {nullable: true}) designation : string
+    @Arg("designation") designation: string
+  ): Promise<PropertyRental | null> {
+    const property = await PropertyRental.findOne(id);
+    if (!property) {
+      return null;
+    }
+    if (typeof designation !== "undefined") {
+      await PropertyRental.update({ id }, { designation });
+    }
     return property;
   }
 
-  @Mutation(() => PropertyRental, {nullable: true})
-  async updateProperty(
-    @Arg('id') id: number,
-    // note: can make fields optional to update. Example => @Arg('designation', () => String, {nullable: true}) designation : string
-    @Arg('designation') designation: string,
-    @Ctx() {em}: MyContext
-    ) : Promise<PropertyRental | null>
-  {
-    const property = await  em.findOne(PropertyRental, {id});
-    if(!property){
-      return null;
-    }
-    if(typeof designation !== 'undefined'){
-      property.designation = designation
-      await em.persistAndFlush(property);
-    }
-    return property;
-  }
-  
   @Mutation(() => Boolean)
-  async deleteProperty(
-    @Arg('id') id: number,
-    @Ctx() {em}: MyContext
-    ) : Promise<boolean>
-  {
+  async deleteProperty(@Arg("id") id: number): Promise<boolean> {
     try {
-      await em.nativeDelete(PropertyRental, {id})      
+      await PropertyRental.delete(id);
     } catch (error) {
-      return false;    
+      return false;
     }
     return true;
   }

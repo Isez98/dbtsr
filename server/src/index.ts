@@ -1,21 +1,33 @@
 import "reflect-metadata";
-import { MikroORM } from "@mikro-orm/core";
 import { COOKIE_NAME, __prod__ } from "./constants";
-import mikroConfig from "./mikro-orm.config";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { HelloResolver } from "./resolvers/hello";
 import { PropertyRentalResolver } from "./resolvers/PropertyRental";
 import { UserResolver } from "./resolvers/User";
+import { DevelopmentsResolver } from "./resolvers/Developments";
 import Redis from "ioredis";
 import session from "express-session";
 import connectRedis from "connect-redis";
 import cors from "cors";
+import { createConnection } from "typeorm";
+import { PropertyRental } from "./entities/PropertyRental";
+import { User } from "./entities/User";
+import { Owner } from "./entities/Owner";
+import { Rent } from "./entities/Rent";
+import { Developments } from "./entities/Developments";
 
 const main = async () => {
-  const orm = await MikroORM.init(mikroConfig);
-  await orm.getMigrator().up();
+  const conn = await createConnection({
+    type: "postgres",
+    database: "dbtsr2",
+    logging: true,
+    synchronize: true,
+    username: "postgres",
+    password: "postgres",
+    entities: [PropertyRental, User, Owner, Rent, Developments],
+  });
 
   const app = express();
 
@@ -48,10 +60,15 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, PropertyRentalResolver, UserResolver],
+      resolvers: [
+        HelloResolver,
+        PropertyRentalResolver,
+        UserResolver,
+        DevelopmentsResolver,
+      ],
       validate: false,
     }),
-    context: ({ req, res }) => ({ em: orm.em, req, res, redis }),
+    context: ({ req, res }) => ({ req, res, redis }),
   });
 
   apolloServer.applyMiddleware({
