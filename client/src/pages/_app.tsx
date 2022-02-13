@@ -5,6 +5,7 @@ import { Cache, cacheExchange, QueryInput } from '@urql/exchange-graphcache'
 import PrivateRoute from '../components/PrivateRoute'
 import {
   LoginMutation,
+  LogoutMutation,
   MeDocument,
   MeQuery,
   RegisterMutation,
@@ -30,7 +31,16 @@ function MyApp({ Component, pageProps }: AppProps) {
       cacheExchange({
         updates: {
           Mutation: {
-            login: (_result: LoginMutation, args, cache, info) => {
+            logout: (_result, args, cache, info) => {
+              typeFunctionQuery<LogoutMutation, MeQuery>(
+                cache,
+                { query: MeDocument },
+                _result,
+                () => ({ me: null })
+              )
+            },
+
+            login: (_result, args, cache, info) => {
               typeFunctionQuery<LoginMutation, MeQuery>(
                 cache,
                 { query: MeDocument },

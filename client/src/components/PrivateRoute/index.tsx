@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
-import { useMeQuery } from '../../generated/graphql'
+import { useLogoutMutation, useMeQuery } from '../../generated/graphql'
 import { FullPageLoader } from '../FullPageLoader'
 
 interface PrivateRouteProps {
@@ -13,6 +13,7 @@ export const PrivateRoute: React.FC<PrivateRouteProps> = ({
 }) => {
   const router = useRouter()
   const [{ data, fetching }] = useMeQuery()
+  const [{ fetching: logoutFetching }] = useLogoutMutation()
   const pathIsProtected = protectedRoutes.indexOf(router.pathname) !== -1
 
   useEffect(() => {
@@ -21,9 +22,12 @@ export const PrivateRoute: React.FC<PrivateRouteProps> = ({
     } else if (!data?.me && pathIsProtected) {
       router.push('/login')
     }
-  }, [pathIsProtected, fetching])
+  }, [pathIsProtected, fetching, logoutFetching])
 
   if (!data?.me && pathIsProtected) {
+    if (data?.me === null) {
+      router.push('/login')
+    }
     return <FullPageLoader />
   }
 
