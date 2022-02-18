@@ -7,6 +7,7 @@ import Wrapper from '../components/Wrapper'
 import { useLoginMutation } from '../generated/graphql'
 import { createUrqlClient } from '../utils/createUrqlClient'
 import { toErrorMap } from '../utils/toErrorMap'
+import NextLink from 'next/link'
 
 interface LoginProps {}
 
@@ -49,12 +50,11 @@ export const Login: React.FC<LoginProps> = ({}) => {
                 >
                   Login
                 </button>
-                <a
-                  className="inline-block align-baseline text-sm font-bold text-blue-500 hover:text-blue-800"
-                  href="#"
-                >
-                  Forgot Password?
-                </a>
+                <NextLink href="/forgot-password">
+                  <span className="inline-block cursor-pointer align-baseline text-sm font-bold text-blue-500 hover:text-blue-800">
+                    Forgot Password?
+                  </span>
+                </NextLink>
               </div>
             </Form>
           )

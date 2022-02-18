@@ -17,6 +17,7 @@ import { User } from "./entities/User";
 import { Owner } from "./entities/Owner";
 import { Rent } from "./entities/Rent";
 import { Developments } from "./entities/Developments";
+//import { sendEmail } from "./utils/sendEmail";
 
 const main = async () => {
   const conn = await createConnection({
