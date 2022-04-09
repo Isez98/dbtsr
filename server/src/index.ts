@@ -17,12 +17,13 @@ import { User } from "./entities/User";
 import { Owner } from "./entities/Owner";
 import { Rent } from "./entities/Rent";
 import { Developments } from "./entities/Developments";
+import { OwnerResolver } from "./resolvers/Owner";
 //import { sendEmail } from "./utils/sendEmail";
 
 const main = async () => {
   const conn = await createConnection({
     type: "postgres",
-    database: "dbtsr2",
+    database: "dbtsr",
     logging: true,
     synchronize: true,
     username: "postgres",
@@ -66,6 +67,7 @@ const main = async () => {
         PropertyRentalResolver,
         UserResolver,
         DevelopmentsResolver,
+        OwnerResolver,
       ],
       validate: false,
     }),

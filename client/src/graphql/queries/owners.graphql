@@ -1,0 +1,8 @@
+query Owners {
+  owners {
+    id
+    name
+    email
+    phone
+  }
+}

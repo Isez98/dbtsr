@@ -22,7 +22,7 @@ export class PropertyRental extends BaseEntity {
 
   @Field()
   @Column()
-  designation!: string;
+  designation: string;
 
   @Field(() => String)
   @Column()

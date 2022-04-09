@@ -1,11 +1,49 @@
 import { Owner } from "../entities/Owner";
-import { Arg, Int, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Field,
+  InputType,
+  Int,
+  Mutation,
+  ObjectType,
+  Query,
+  Resolver,
+} from "type-graphql";
+@ObjectType()
+class FieldError {
+  @Field()
+  field: string;
+
+  @Field()
+  message: string;
+}
+
+@InputType()
+class OwnerInput {
+  @Field()
+  name: string;
+
+  @Field({ nullable: true })
+  email: string;
+
+  @Field({ nullable: true })
+  phone: string;
+}
+
+@ObjectType()
+class OwnerResponse {
+  @Field(() => [FieldError], { nullable: true })
+  errors?: FieldError[];
+
+  @Field(() => Owner, { nullable: true })
+  owner?: Owner;
+}
 
 @Resolver()
 export class OwnerResolver {
   @Query(() => [Owner])
-  async owners(): Promise<Owner[]> {
-    return Owner.find();
+  owners(): Promise<Owner[]> {
+    return Owner.find({});
   }
 
   @Query(() => Owner, { nullable: true })
@@ -14,24 +52,8 @@ export class OwnerResolver {
   }
 
   @Mutation(() => Owner)
-  async createOwner(
-    @Arg("name") name: string,
-    @Arg("email") email: string,
-    @Arg("phone") phone: string
-  ): Promise<Owner | null> {
-    if(!name){
-      return null;
-    }
-    else if(!email && phone){
-      return Owner.create({name, phone}).save();
-    }
-    else if(!phone && email){
-      return Owner.create({name, email}).save();
-    }
-    else if(!phone && !email){
-      return Owner.create({name}).save();
-    }
-    return Owner.create({ name, email, phone }).save();    
+  async createOwner(@Arg("options") options: OwnerInput): Promise<Owner> {
+    return Owner.create(options).save();
   }
 
   // On hold until finding better way to update
@@ -49,10 +71,10 @@ export class OwnerResolver {
   // }
 
   @Mutation(() => Boolean)
-  async deleteOWner(@Arg("id") id: number) : Promise<boolean> {
-    try{
+  async deleteOWner(@Arg("id") id: number): Promise<boolean> {
+    try {
       await Owner.delete(id);
-    } catch(error){
+    } catch (error) {
       return false;
     }
     return true;

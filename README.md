@@ -12,6 +12,7 @@ The project implements:
 - Graphql
 - Next.js
 - Chakra UI
+- Tailwind
 - Postgres
 - Redis
 - MikroORM

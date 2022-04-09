@@ -1,0 +1,8 @@
+mutation CreateOwner($name: String!, $email: String, $phone: String) {
+  createOwner(options: { name: $name, email: $email, phone: $phone }) {
+    id
+    name
+    email
+    phone
+  }
+}
