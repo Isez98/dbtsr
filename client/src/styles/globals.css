@@ -1,3 +1,55 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.page-container {
+  position: relative;
+  overflow-x: auto;
+}
+
+.bar__close {
+  width: 0%;
+  max-width: 0%;
+  min-width: 0%;
+  left: -150px;
+  transition: width 1s, min-width 1s, max-width 1s;
+  -webkit-transition: width 1s, min-width 1s, max-width 1s;
+}
+
+.bar__open {
+  width: 8.5%;
+  max-width: 8.5%;
+  min-width: 8.5%;
+  transition: width 1s, min-width 1s, max-width 1s;
+  -webkit-transition: width 1s, min-width 1s, max-width 1s;
+}
+
+.page__widen {
+  width: auto;
+  max-width: 100%;
+  min-width: 100%;
+  transition: width 1s, min-width 1s, max-width 1s;
+  -webkit-transition: width 1s, min-width 1s, max-width 1s;
+}
+
+.page__shrink {
+  width: auto;
+  min-width: 92%;
+  max-width: 92%;
+  transition: width 1s, min-width 1s, max-width 1s;
+  -webkit-transition: width 1s, min-width 1s, max-width 1s;
+}
+
+@media screen and (max-width: 1200px) {
+  .Navbar__Container {
+    width: 0%;
+    max-width: 0%;
+    min-width: 0%;
+    left: -150px;
+  }
+
+  .page-container {
+    width: 100%;
+    min-width: 100%;
+  }
+}

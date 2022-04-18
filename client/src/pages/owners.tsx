@@ -1,74 +1,49 @@
-import { Formik, Form } from 'formik'
 import { withUrqlClient } from 'next-urql'
 import Head from 'next/head'
-import router from 'next/router'
-import React, { useEffect, useState } from 'react'
-import InputField from '../components/InputField'
+import React, { useContext, useEffect, useState } from 'react'
 import NavBar from '../components/NavBar'
+import SideMenu from '../components/SideMenu'
+import Table from '../components/Table'
 import { useOwnersQuery } from '../generated/graphql'
 import { createUrqlClient } from '../utils/createUrqlClient'
-import { toErrorMap } from '../utils/toErrorMap'
-import login from './login'
+import { SizeContext } from '../utils/sizeContext'
 
 interface OwnersProps {}
 
 export const Owners: React.FC<OwnersProps> = ({}) => {
+  const { size } = useContext(SizeContext)
   const [{ data }] = useOwnersQuery()
-  const [ownersData, setOwnersData] = useState({})
+  // const [ownersData, setOwnersData] = useState({})
 
-  useEffect(() => {
-    setOwnersData(() => data)
-  }, [])
+  const columns = [
+    { title: 'Name', key: 'name' },
+    { title: 'Email', key: 'email' },
+    { title: 'Phone', key: 'phone' },
+  ]
 
   return (
-    <div>
+    <div className="h-full w-full">
       <Head>
         <title>Owners</title>
       </Head>
-      <NavBar routes={['home', 'developments']} />
-      <main>
-        <h1>Owner's page</h1>
-        {/* <Formik
-        initialValues={{ email: '', password: '' }}
-        onSubmit={async (values, { setErrors }) => {
-          const response = await owners(values)
-          if (response.data?.login.errors) {
-            setErrors(toErrorMap(response.data.login.errors))
-          } else if (response.data?.login.user) {
-            // works
-            router.push('/')
-          }
-        }}
-      >
-        {({ isSubmitting }) => {
-          return (
-            <Form>
-              <div className="mb-4">
-                <InputField name="email" label="Email" placeholder="Email" />
-              </div>
-              <div className="mb-6">
-                <InputField
-                  name="password"
-                  label="Password"
-                  placeholder="*********"
-                  type="password"
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <button
-                  className="focus:shadow-outline rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700 focus:outline-none"
-                  type="submit"
-                  onClick={() => isSubmitting}
-                >
-                  Login
-                </button>
-              </div>
-            </Form>
-          )
-        }}
-      </Formik> */}
-      </main>
-      <footer>Desert By The Sea Rentals</footer>
+      <div className="flex w-full">
+        <SideMenu className=" px-3" items={['home', 'developments']} />
+        <div
+          className={`page-container bg-white ${
+            size ? 'page__widen' : 'page__shrink'
+          }`}
+        >
+          <NavBar routes={['home', 'developments']} />
+          <main className="justify-content-center container h-auto">
+            {data ? (
+              <Table columns={columns} data={data.owners}></Table>
+            ) : (
+              <>Nothing to see here...</>
+            )}
+            <footer>Desert By The Sea Rentals</footer>
+          </main>
+        </div>
+      </div>
     </div>
   )
 }

@@ -7,9 +7,12 @@
     "gen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
+    "@tailwindcss/forms": "^0.5.0",
     "@urql/exchange-graphcache": "^4.3.6",
+    "dayjs": "^1.11.1",
     "formik": "^2.2.9",
-    "graphql": "^16.3.0",
+    "graphql": "^15.0.0",
+    "graphql-tag": "^2.0.0",
     "next": "latest",
     "next-urql": "^3.3.2",
     "react": "^17.0.2",
