@@ -9,6 +9,9 @@ module.exports = {
     container: {
       center: true,
     },
+    // gridTemplateColumns: {
+    //   '1/5': '1fr 5fr',
+    // },
   },
   plugins: [],
 }
