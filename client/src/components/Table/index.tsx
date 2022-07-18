@@ -6,16 +6,25 @@ interface TableProps {
     title: string
     key: string
   }[]
+  className?: string
+  rowClick?: Function
 }
 
-export const Table: React.FC<TableProps> = ({ data, columns }) => {
+export const Table: React.FC<TableProps> = ({
+  data,
+  columns,
+  className,
+  rowClick = () => {},
+}) => {
   return (
-    <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <div
+      className={`relative overflow-x-auto shadow-md sm:rounded-lg ${className}`}
+    >
       <table
-        className="w-full table-auto text-left text-sm text-gray-500 dark:text-gray-400"
+        className="w-full table-auto text-left text-sm dark:text-white"
         key={`table-${columns.length}`}
       >
-        <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+        <thead className="bg-gray-50 text-xs uppercase dark:bg-gray-700 dark:text-gray-400">
           <tr>
             {columns.map((item, key) => {
               return (
@@ -41,7 +50,11 @@ export const Table: React.FC<TableProps> = ({ data, columns }) => {
               headerKey: any
             ) => {
               return (
-                <tr key={`tr-${headerKey}`}>
+                <tr
+                  key={`tr-${headerKey}`}
+                  className="cursor-pointer duration-300 ease-in hover:bg-gray-500"
+                  onClick={() => rowClick(item.id)}
+                >
                   {columns.map((i, k) => {
                     type ObjectKey = keyof typeof item
                     const key = i.key as ObjectKey

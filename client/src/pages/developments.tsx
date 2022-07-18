@@ -2,12 +2,21 @@ import Head from 'next/head'
 import React, { useContext } from 'react'
 import NavBar from '../components/NavBar'
 import SideMenu from '../components/SideMenu'
-import { SizeContext } from '../utils/sizeContext'
+import Table from '../components/Table'
+import GlobalContext from '../context/GlobalContext'
+import { useDevelopmentsQuery } from '../generated/graphql'
 
 interface DevelopmentsProps {}
 
 export const Developments: React.FC<DevelopmentsProps> = ({}) => {
-  const { size } = useContext(SizeContext)
+  const { size } = useContext(GlobalContext)
+  const [{ data }] = useDevelopmentsQuery()
+
+  const columns = [
+    { title: 'Name', key: 'name' },
+    { title: 'Location', key: 'location' },
+  ]
+
   return (
     <div className="h-full w-full">
       <Head>
@@ -21,10 +30,22 @@ export const Developments: React.FC<DevelopmentsProps> = ({}) => {
           }`}
         >
           <NavBar routes={['home', 'owners']} />
-          <main className="h-auto">
-            <h1>Development's page</h1>
+          <main className="justify-content-center container h-auto">
+            {data ? (
+              <>
+                <Table
+                  columns={columns}
+                  data={data.developments}
+                  className="p-6"
+                />
+              </>
+            ) : (
+              <>Nothing to see here...</>
+            )}
           </main>
-          <footer>Desert By The Sea Rentals</footer>
+          <footer className="w-100 flex justify-center">
+            Desert By The Sea Rentals
+          </footer>
         </div>
       </div>
     </div>

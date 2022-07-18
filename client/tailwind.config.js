@@ -5,13 +5,14 @@ module.exports = {
     './src/components/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      gridTemplateColumns: {
+        '1/5': '1fr 5fr',
+      },
+    },
     container: {
       center: true,
     },
-    // gridTemplateColumns: {
-    //   '1/5': '1fr 5fr',
-    // },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/forms')],
 }

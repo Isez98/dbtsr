@@ -1,14 +1,14 @@
 import Link from 'next/link'
 import React, { useContext } from 'react'
+import GlobalContext from '../../context/GlobalContext'
 import { useLogoutMutation } from '../../generated/graphql'
-import { SizeContext } from '../../utils/sizeContext'
 
 interface NavBarProps {
   routes: string[]
 }
 
 export const NavBar: React.FC<NavBarProps> = ({ routes }) => {
-  const { size, setSize } = useContext(SizeContext)
+  const { size, setSize } = useContext(GlobalContext)
   const [, logout] = useLogoutMutation()
 
   return (

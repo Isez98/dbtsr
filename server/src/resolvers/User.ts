@@ -26,7 +26,7 @@ class EmailAndPasswordInput {
 }
 
 @ObjectType()
-class FieldError {
+export class FieldError {
   @Field()
   field: string;
   @Field()

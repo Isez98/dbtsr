@@ -1,6 +1,6 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 import Link from 'next/link'
-import { SizeContext } from '../../utils/sizeContext'
+import GlobalContext from '../../context/GlobalContext'
 
 interface SideMenuProps {
   items: string[]
@@ -8,7 +8,7 @@ interface SideMenuProps {
 }
 
 export const SideMenu: React.FC<SideMenuProps> = ({ items, className }) => {
-  const { size, setSize } = useContext(SizeContext)
+  const { size, setSize } = useContext(GlobalContext)
 
   return (
     <div

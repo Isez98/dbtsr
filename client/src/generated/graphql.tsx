@@ -46,7 +46,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   changePassword: UserResponse;
   createDevelopment: Developments;
-  createOwner: Owner;
+  createOwner: OwnerResponse;
   createProperty: PropertyRental;
   deleteDevelopment: Scalars['Boolean'];
   deleteOWner: Scalars['Boolean'];
@@ -126,9 +126,15 @@ export type Owner = {
 };
 
 export type OwnerInput = {
-  email?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
   name: Scalars['String'];
   phone?: InputMaybe<Scalars['String']>;
+};
+
+export type OwnerResponse = {
+  __typename?: 'OwnerResponse';
+  errors?: Maybe<Array<FieldError>>;
+  owner?: Maybe<Owner>;
 };
 
 export type PropertyInput = {
@@ -178,6 +184,12 @@ export type QueryOwnerArgs = {
 };
 
 
+export type QueryOwnersArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
+};
+
+
 export type QueryPropertyArgs = {
   id: Scalars['Int'];
 };
@@ -212,12 +224,12 @@ export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: 
 
 export type CreateOwnerMutationVariables = Exact<{
   name: Scalars['String'];
-  email?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
   phone?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type CreateOwnerMutation = { __typename?: 'Mutation', createOwner: { __typename?: 'Owner', id: number, name: string, email: string, phone: string } };
+export type CreateOwnerMutation = { __typename?: 'Mutation', createOwner: { __typename?: 'OwnerResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, owner?: { __typename?: 'Owner', id: number, name: string, email: string, phone: string } | null } };
 
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String'];
@@ -247,6 +259,11 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, user?: { __typename?: 'User', id: number, email: string } | null } };
 
+export type DevelopmentsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type DevelopmentsQuery = { __typename?: 'Query', developments: Array<{ __typename?: 'Developments', id: number, createdAt: string, name: string, location: string }> };
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -259,10 +276,13 @@ export type OwnerQueryVariables = Exact<{
 
 export type OwnerQuery = { __typename?: 'Query', owner?: { __typename?: 'Owner', name: string, email: string, phone: string } | null };
 
-export type OwnersQueryVariables = Exact<{ [key: string]: never; }>;
+export type OwnersQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: InputMaybe<Scalars['String']>;
+}>;
 
 
-export type OwnersQuery = { __typename?: 'Query', owners: Array<{ __typename?: 'Owner', id: number, name: string, email: string, phone: string }> };
+export type OwnersQuery = { __typename?: 'Query', owners: Array<{ __typename?: 'Owner', id: number, createdAt: string, name: string, email: string, phone: string }> };
 
 export const RegularErrorFragmentDoc = gql`
     fragment RegularError on FieldError {
@@ -299,15 +319,20 @@ export function useChangePasswordMutation() {
   return Urql.useMutation<ChangePasswordMutation, ChangePasswordMutationVariables>(ChangePasswordDocument);
 };
 export const CreateOwnerDocument = gql`
-    mutation CreateOwner($name: String!, $email: String, $phone: String) {
+    mutation CreateOwner($name: String!, $email: String!, $phone: String) {
   createOwner(options: {name: $name, email: $email, phone: $phone}) {
-    id
-    name
-    email
-    phone
+    errors {
+      ...RegularError
+    }
+    owner {
+      id
+      name
+      email
+      phone
+    }
   }
 }
-    `;
+    ${RegularErrorFragmentDoc}`;
 
 export function useCreateOwnerMutation() {
   return Urql.useMutation<CreateOwnerMutation, CreateOwnerMutationVariables>(CreateOwnerDocument);
@@ -352,6 +377,20 @@ export const RegisterDocument = gql`
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
 };
+export const DevelopmentsDocument = gql`
+    query Developments {
+  developments {
+    id
+    createdAt
+    name
+    location
+  }
+}
+    `;
+
+export function useDevelopmentsQuery(options?: Omit<Urql.UseQueryArgs<DevelopmentsQueryVariables>, 'query'>) {
+  return Urql.useQuery<DevelopmentsQuery>({ query: DevelopmentsDocument, ...options });
+};
 export const MeDocument = gql`
     query Me {
   me {
@@ -377,9 +416,10 @@ export function useOwnerQuery(options: Omit<Urql.UseQueryArgs<OwnerQueryVariable
   return Urql.useQuery<OwnerQuery>({ query: OwnerDocument, ...options });
 };
 export const OwnersDocument = gql`
-    query Owners {
-  owners {
+    query Owners($limit: Int!, $cursor: String) {
+  owners(limit: $limit, cursor: $cursor) {
     id
+    createdAt
     name
     email
     phone
@@ -387,6 +427,6 @@ export const OwnersDocument = gql`
 }
     `;
 
-export function useOwnersQuery(options?: Omit<Urql.UseQueryArgs<OwnersQueryVariables>, 'query'>) {
+export function useOwnersQuery(options: Omit<Urql.UseQueryArgs<OwnersQueryVariables>, 'query'>) {
   return Urql.useQuery<OwnersQuery>({ query: OwnersDocument, ...options });
 };

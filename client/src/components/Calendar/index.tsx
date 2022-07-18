@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react'
 import GlobalContext from '../../context/GlobalContext'
+import EventModal from '../EventModal'
 import CalendarHeader from './components/CalendarHeader'
 import Month from './components/Month'
 import Sidebar from './components/Sidebar'
@@ -9,7 +10,7 @@ interface CalendarProps {}
 
 export const Calendar: React.FC<CalendarProps> = ({}) => {
   const [currentMonth, setCurrentMonth] = useState(getMonth())
-  const { monthIndex } = useContext(GlobalContext)
+  const { monthIndex, showEventModal } = useContext(GlobalContext)
 
   useEffect(() => {
     setCurrentMonth(getMonth(monthIndex))
@@ -17,6 +18,7 @@ export const Calendar: React.FC<CalendarProps> = ({}) => {
 
   return (
     <React.Fragment>
+      {showEventModal && <EventModal formType="Calendar" />}
       <div className="flex h-3/4 w-4/5 flex-col">
         <CalendarHeader />
         <div className="flex flex-1">

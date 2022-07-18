@@ -4,12 +4,11 @@ import { useContext } from 'react'
 import Calendar from '../components/Calendar'
 import NavBar from '../components/NavBar'
 import SideMenu from '../components/SideMenu'
-import ContextWrapper from '../context/ContextWrapper'
+import GlobalContext from '../context/GlobalContext'
 import { createUrqlClient } from '../utils/createUrqlClient'
-import { SizeContext } from '../utils/sizeContext'
 
 const Home = () => {
-  const { size } = useContext(SizeContext)
+  const { size } = useContext(GlobalContext)
   return (
     <div className="min-h-4/5 flex flex-col">
       <Head>
@@ -25,9 +24,7 @@ const Home = () => {
         >
           <NavBar routes={['owners', 'developments']} />
           <main className="flex h-screen w-full flex-1 flex-col items-center justify-center px-20 text-center">
-            <ContextWrapper>
-              <Calendar />
-            </ContextWrapper>
+            <Calendar />
           </main>
         </div>
       </div>

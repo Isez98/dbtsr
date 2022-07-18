@@ -29,7 +29,7 @@ export const PrivateRoute: React.FC<PrivateRouteProps> = ({
 
   if (!data?.me && pathIsProtected) {
     if (data?.me === null) {
-      router.push('/login')
+      router.push('/login?next=' + router.pathname)
     }
     return <FullPageLoader />
   }
