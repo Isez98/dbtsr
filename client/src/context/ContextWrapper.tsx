@@ -9,7 +9,7 @@ export const ContextWrapper: React.FC<IContextWrapperProps> = (props) => {
   const [smallCalendarMonth, setSmallCalendarMonth] = useState(-1)
   const [daySelected, setDaySelected] = useState<dayjs.Dayjs>(dayjs())
   const [showEventModal, setShowEventModal] = useState(false)
-  const [size, setSize] = useState<boolean>(false)
+  const [size, setSize] = useState(false)
 
   useEffect(() => {
     if (smallCalendarMonth >= 0) {

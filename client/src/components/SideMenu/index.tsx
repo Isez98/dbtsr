@@ -20,7 +20,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({ items, className }) => {
       {items.map((item, key) => {
         return (
           <div key={`sideItem-${key}`}>
-            <Link href={`/${item}`}>{item}</Link>
+            <Link href={`/${item !== 'home' ? item : ''}`}>{item}</Link>
           </div>
         )
       })}

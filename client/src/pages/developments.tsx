@@ -1,15 +1,10 @@
-import Head from 'next/head'
-import React, { useContext } from 'react'
-import NavBar from '../components/NavBar'
-import SideMenu from '../components/SideMenu'
+import React, { ReactElement } from 'react'
+import PageFrame from '../components/PageFrame'
 import Table from '../components/Table'
-import GlobalContext from '../context/GlobalContext'
 import { useDevelopmentsQuery } from '../generated/graphql'
+import { NextPageWithLayout } from './_app'
 
-interface DevelopmentsProps {}
-
-export const Developments: React.FC<DevelopmentsProps> = ({}) => {
-  const { size } = useContext(GlobalContext)
+export const Developments: NextPageWithLayout = ({}) => {
   const [{ data }] = useDevelopmentsQuery()
 
   const columns = [
@@ -18,38 +13,20 @@ export const Developments: React.FC<DevelopmentsProps> = ({}) => {
   ]
 
   return (
-    <div className="h-full w-full">
-      <Head>
-        <title>Developments</title>
-      </Head>
-      <div className="flex w-full">
-        <SideMenu className=" px-3" items={['home', 'owners']} />
-        <div
-          className={`page-container bg-white ${
-            size ? 'page__widen' : 'page__shrink'
-          }`}
-        >
-          <NavBar routes={['home', 'owners']} />
-          <main className="justify-content-center container h-auto">
-            {data ? (
-              <>
-                <Table
-                  columns={columns}
-                  data={data.developments}
-                  className="p-6"
-                />
-              </>
-            ) : (
-              <>Nothing to see here...</>
-            )}
-          </main>
-          <footer className="w-100 flex justify-center">
-            Desert By The Sea Rentals
-          </footer>
-        </div>
-      </div>
-    </div>
+    <PageFrame>
+      {data ? (
+        <>
+          <Table columns={columns} data={data.developments} className="p-6" />
+        </>
+      ) : (
+        <>Nothing to see here...</>
+      )}
+    </PageFrame>
   )
+}
+
+Developments.getLayout = function getLayout(page: ReactElement) {
+  return page
 }
 
 export default Developments
