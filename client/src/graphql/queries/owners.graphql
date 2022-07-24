@@ -1,0 +1,9 @@
+query Owners($limit: Int!, $cursor: String) {
+  owners(limit: $limit, cursor: $cursor) {
+    id
+    createdAt
+    name
+    email
+    phone
+  }
+}

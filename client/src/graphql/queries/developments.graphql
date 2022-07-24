@@ -1,0 +1,8 @@
+query Developments {
+  developments {
+    id
+    createdAt
+    name
+    location
+  }
+}
