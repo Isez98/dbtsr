@@ -13,7 +13,7 @@ export const Developments: NextPageWithLayout = ({}) => {
   ]
 
   return (
-    <PageFrame>
+    <PageFrame title="Developments">
       {data ? (
         <>
           <Table columns={columns} data={data.developments} className="p-6" />

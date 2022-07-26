@@ -13,7 +13,7 @@ export const owner: NextPageWithLayout = ({}) => {
     variables: { id: Number(router.query.owner_id) },
   })
   return (
-    <PageFrame>
+    <PageFrame title="Owner">
       <div>
         <Wrapper>
           <div className="flex justify-between">
