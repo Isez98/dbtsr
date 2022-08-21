@@ -17,7 +17,13 @@ type AppPropsWithLayout = AppProps & {
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   // Add your protected routes here
-  const protectedRoutes = ['/', '/developments', '/owners', '/owner']
+  const protectedRoutes = [
+    '/',
+    '/developments',
+    '/owners',
+    '/owner',
+    '/development',
+  ]
   const getLayout = Component.getLayout || ((page: ReactElement) => page)
 
   return getLayout(

@@ -17,8 +17,14 @@ export type Scalars = {
 
 export type DevelopmentInput = {
   location: Scalars['String'];
-  logo: Scalars['String'];
+  logo?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
+};
+
+export type DevelopmentResponse = {
+  __typename?: 'DevelopmentResponse';
+  development?: Maybe<Developments>;
+  errors?: Maybe<Array<FieldError>>;
 };
 
 export type Developments = {
@@ -45,7 +51,7 @@ export type FieldError = {
 export type Mutation = {
   __typename?: 'Mutation';
   changePassword: UserResponse;
-  createDevelopment: Developments;
+  createDevelopment: DevelopmentResponse;
   createOwner: OwnerResponse;
   createProperty: PropertyRental;
   deleteDevelopment: Scalars['Boolean'];
@@ -179,6 +185,12 @@ export type QueryDevelopmentArgs = {
 };
 
 
+export type QueryDevelopmentsArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
+};
+
+
 export type QueryOwnerArgs = {
   id: Scalars['Int'];
 };
@@ -222,6 +234,15 @@ export type ChangePasswordMutationVariables = Exact<{
 
 export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, user?: { __typename?: 'User', id: number, email: string } | null } };
 
+export type CreateDevelopmentMutationVariables = Exact<{
+  name: Scalars['String'];
+  location: Scalars['String'];
+  logo?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type CreateDevelopmentMutation = { __typename?: 'Mutation', createDevelopment: { __typename?: 'DevelopmentResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, development?: { __typename?: 'Developments', id: number, name: string, location: string } | null } };
+
 export type CreateOwnerMutationVariables = Exact<{
   name: Scalars['String'];
   email: Scalars['String'];
@@ -259,7 +280,17 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, user?: { __typename?: 'User', id: number, email: string } | null } };
 
-export type DevelopmentsQueryVariables = Exact<{ [key: string]: never; }>;
+export type DevelopmentQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type DevelopmentQuery = { __typename?: 'Query', development?: { __typename?: 'Developments', name: string, location: string } | null };
+
+export type DevelopmentsQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: InputMaybe<Scalars['String']>;
+}>;
 
 
 export type DevelopmentsQuery = { __typename?: 'Query', developments: Array<{ __typename?: 'Developments', id: number, createdAt: string, name: string, location: string }> };
@@ -317,6 +348,24 @@ export const ChangePasswordDocument = gql`
 
 export function useChangePasswordMutation() {
   return Urql.useMutation<ChangePasswordMutation, ChangePasswordMutationVariables>(ChangePasswordDocument);
+};
+export const CreateDevelopmentDocument = gql`
+    mutation CreateDevelopment($name: String!, $location: String!, $logo: String) {
+  createDevelopment(input: {name: $name, location: $location, logo: $logo}) {
+    errors {
+      ...RegularError
+    }
+    development {
+      id
+      name
+      location
+    }
+  }
+}
+    ${RegularErrorFragmentDoc}`;
+
+export function useCreateDevelopmentMutation() {
+  return Urql.useMutation<CreateDevelopmentMutation, CreateDevelopmentMutationVariables>(CreateDevelopmentDocument);
 };
 export const CreateOwnerDocument = gql`
     mutation CreateOwner($name: String!, $email: String!, $phone: String) {
@@ -377,9 +426,21 @@ export const RegisterDocument = gql`
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
 };
+export const DevelopmentDocument = gql`
+    query Development($id: Int!) {
+  development(id: $id) {
+    name
+    location
+  }
+}
+    `;
+
+export function useDevelopmentQuery(options: Omit<Urql.UseQueryArgs<DevelopmentQueryVariables>, 'query'>) {
+  return Urql.useQuery<DevelopmentQuery>({ query: DevelopmentDocument, ...options });
+};
 export const DevelopmentsDocument = gql`
-    query Developments {
-  developments {
+    query Developments($limit: Int!, $cursor: String) {
+  developments(limit: $limit, cursor: $cursor) {
     id
     createdAt
     name
@@ -388,7 +449,7 @@ export const DevelopmentsDocument = gql`
 }
     `;
 
-export function useDevelopmentsQuery(options?: Omit<Urql.UseQueryArgs<DevelopmentsQueryVariables>, 'query'>) {
+export function useDevelopmentsQuery(options: Omit<Urql.UseQueryArgs<DevelopmentsQueryVariables>, 'query'>) {
   return Urql.useQuery<DevelopmentsQuery>({ query: DevelopmentsDocument, ...options });
 };
 export const MeDocument = gql`
