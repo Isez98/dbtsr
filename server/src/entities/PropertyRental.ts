@@ -22,7 +22,7 @@ export class PropertyRental extends BaseEntity {
 
   @Field()
   @Column()
-  designation: string;
+  designation!: string;
 
   @Field(() => String)
   @Column()
@@ -31,10 +31,6 @@ export class PropertyRental extends BaseEntity {
   @Field(() => String)
   @Column("text")
   notes: string;
-
-  @Field(() => Int)
-  @Column()
-  ownerId: number;
 
   @Field()
   @Column()
@@ -60,12 +56,20 @@ export class PropertyRental extends BaseEntity {
   @Column()
   extraGuestRate: number;
 
-  @ManyToOne(() => Developments, (developments) => developments.properties)
-  development: Developments;
-
   @Field(() => Boolean)
   @Column()
   completeRentControl: boolean;
+
+  @Field(() => Int)
+  @Column()
+  developmentId: number;
+
+  @ManyToOne(() => Developments, (developments) => developments.properties)
+  development: Developments;
+
+  @Field(() => Int)
+  @Column()
+  ownerId: number;
 
   @ManyToOne(() => Owner, (owner) => owner.properties)
   owner: Owner;
