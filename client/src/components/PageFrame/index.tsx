@@ -24,7 +24,7 @@ export const PageFrame: React.FC<PageFrameProps> = ({ children, title }) => {
               size ? 'page__widen' : 'page__shrink'
             }`}
           >
-            <NavBar routes={['home', 'owners', 'developments']} />
+            <NavBar routes={['home', 'owners', 'developments', 'properties']} />
             <main className="justify-content-center container h-auto">
               {children}
             </main>

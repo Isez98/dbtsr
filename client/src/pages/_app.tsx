@@ -20,9 +20,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const protectedRoutes = [
     '/',
     '/developments',
+    '/development',
     '/owners',
     '/owner',
-    '/development',
+    '/properties',
   ]
   const getLayout = Component.getLayout || ((page: ReactElement) => page)
 
