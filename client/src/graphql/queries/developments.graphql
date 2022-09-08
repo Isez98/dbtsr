@@ -1,5 +1,5 @@
-query Developments {
-  developments {
+query Developments($limit: Int!, $cursor: String) {
+  developments(limit: $limit, cursor: $cursor) {
     id
     createdAt
     name

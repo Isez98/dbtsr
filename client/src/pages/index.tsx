@@ -7,7 +7,7 @@ import { NextPageWithLayout } from './_app'
 
 const Home: NextPageWithLayout = () => {
   return (
-    <PageFrame>
+    <PageFrame title="Home">
       <Calendar />
     </PageFrame>
   )

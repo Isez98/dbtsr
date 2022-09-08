@@ -1,5 +1,5 @@
 import { cacheExchange, Cache } from '@urql/exchange-graphcache'
-import { createClient, dedupExchange, fetchExchange } from 'urql'
+import { dedupExchange, fetchExchange } from 'urql'
 import {
   LogoutMutation,
   MeQuery,
@@ -9,11 +9,11 @@ import {
 } from '../generated/graphql'
 import { typeFunctionQuery } from './typeFunctionQuery'
 
-function invalidateOwners(cache: Cache) {
+function invalidateQuery(cache: Cache, query: string) {
   const allFields = cache.inspectFields('Query')
-  const fieldInfos = allFields.filter((info) => info.fieldName === 'owners')
+  const fieldInfos = allFields.filter((info) => info.fieldName === query)
   fieldInfos.forEach((fi) => {
-    cache.invalidate('Query', 'owners', fi.arguments || {})
+    cache.invalidate('Query', query, fi.arguments || {})
   })
 }
 
@@ -54,7 +54,11 @@ export const createUrqlClient = (ssrExchange: any) => ({
           },
 
           createOwner: (_result, args, cache, info) => {
-            invalidateOwners(cache)
+            invalidateQuery(cache, 'owners')
+          },
+
+          createDevelopment: (_result, args, cache, info) => {
+            invalidateQuery(cache, 'developments')
           },
 
           register: (_result: LoginMutation, args, cache, info) => {

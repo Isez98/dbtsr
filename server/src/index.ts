@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { COOKIE_NAME, __prod__ } from "./constants";
+import { COOKIE_NAME, __prod__, POSTGRES_PASSWORD, POSTGRES_DATABASE, POSTGRES_USERNAME } from "./constants";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
@@ -23,11 +23,11 @@ import { OwnerResolver } from "./resolvers/Owner";
 const main = async () => {
   const conn = await createConnection({
     type: "postgres",
-    database: "dbtsr",
+    database: POSTGRES_DATABASE,
     logging: true,
     synchronize: true,
-    username: "postgres",
-    password: "postgres",
+    username: POSTGRES_USERNAME,
+    password: POSTGRES_PASSWORD,
     entities: [PropertyRental, User, Owner, Rent, Developments],
   });
 

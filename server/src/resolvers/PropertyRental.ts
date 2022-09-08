@@ -7,7 +7,10 @@ import {
   Mutation,
   InputType,
   Field,
+  ObjectType,
 } from "type-graphql";
+import { FieldError } from "./User";
+import { getConnection } from "typeorm";
 
 @InputType()
 class PropertyInput {
@@ -15,12 +18,28 @@ class PropertyInput {
   designation: string;
 
   @Field()
-  album: string;
+  developmentId: number;
 
   @Field()
+  ownerId: number;
+
+  @Field({ nullable: true })
+  album: string;
+
+  @Field({ nullable: true })
   notes: string;
 }
 
+@ObjectType()
+class PropertyRentalResponse {
+  @Field(() => [FieldError], { nullable: true })
+  errors?: FieldError[];
+
+  @Field(() => PropertyRental, { nullable: true })
+  propertyRental?: PropertyRental;
+}
+
+// Modify later
 @Resolver()
 export class PropertyRentalResolver {
   @Query(() => [PropertyRental])
@@ -35,14 +54,57 @@ export class PropertyRentalResolver {
     return PropertyRental.findOne(id);
   }
 
-  @Mutation(() => PropertyRental)
+  @Mutation(() => PropertyRentalResponse)
   async createProperty(
     @Arg("input") input: PropertyInput
-  ): Promise<PropertyRental> {
-    // 2 SQL queries
-    return PropertyRental.create({
-      ...input,
-    }).save();
+  ): Promise<PropertyRentalResponse> {
+    const checkExistence = await PropertyRental.findOne({
+      where: {
+        designation: input.designation,
+        developmentId: input.developmentId,
+      },
+    });
+
+    if (checkExistence) {
+      return {
+        errors: [
+          {
+            field: "",
+            message: "",
+          },
+        ],
+      };
+    }
+    let propertyRental;
+    try {
+      const result = await getConnection()
+        .createQueryBuilder()
+        .insert()
+        .into(PropertyRental)
+        .values({
+          designation: input.designation,
+          ownerId: input.ownerId,
+          developmentId: input.developmentId,
+        })
+        .returning("*")
+        .execute();
+      propertyRental = result.raw[0];
+    } catch (error) {
+      if (error.code === "23505") {
+        return {
+          errors: [
+            {
+              field: "development",
+              message: "Condo already exists in this development",
+            },
+          ],
+        };
+      }
+    }
+
+    return {
+      propertyRental,
+    };
   }
 
   @Mutation(() => PropertyRental, { nullable: true })

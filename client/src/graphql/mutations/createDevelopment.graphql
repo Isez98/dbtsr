@@ -1,0 +1,12 @@
+mutation CreateDevelopment($name: String!, $location: String!, $logo: String) {
+  createDevelopment(input: { name: $name, location: $location, logo: $logo }) {
+    errors {
+      ...RegularError
+    }
+    development {
+      id
+      name
+      location
+    }
+  }
+}

@@ -30,7 +30,7 @@ export const Owners: NextPageWithLayout = ({}) => {
   }
 
   return (
-    <PageFrame>
+    <PageFrame title="Owners">
       {showEventModal && <EventModal className="z-20" formType="Owner" />}
       {data ? (
         <>

@@ -1,26 +1,23 @@
-import { withUrqlClient } from 'next-urql'
 import { useRouter } from 'next/router'
-import React, { ReactElement } from 'react'
+import React from 'react'
 import PageFrame from '../../components/PageFrame'
 import Wrapper from '../../components/Wrapper'
-import { useOwnerQuery } from '../../generated/graphql'
-import { createUrqlClient } from '../../utils/createUrqlClient'
+import { useDevelopmentQuery } from '../../generated/graphql'
 import { NextPageWithLayout } from '../_app'
 
-export const owner: NextPageWithLayout = ({}) => {
+export const development: NextPageWithLayout = ({}) => {
   const router = useRouter()
-  const [{ data }] = useOwnerQuery({
-    variables: { id: Number(router.query.owner_id) },
+  const [{ data }] = useDevelopmentQuery({
+    variables: { id: Number(router.query.development_id) },
   })
   return (
     <PageFrame title="Owner">
       <div>
         <Wrapper>
           <div className="flex justify-between">
-            <h1>{`Name: ${data?.owner?.name}`}</h1>
+            <h1>{`Name: ${data?.development?.name}`}</h1>
             <span>
-              <span>{`Email: ${data?.owner?.email}`}</span>
-              <span>{` | Phone: ${data?.owner?.phone}`}</span>
+              <span>{`Location: ${data?.development?.location}`}</span>
             </span>
           </div>
           <br />
@@ -36,8 +33,4 @@ export const owner: NextPageWithLayout = ({}) => {
   )
 }
 
-owner.getLayout = function getLayout(page: ReactElement) {
-  return page
-}
-
-export default withUrqlClient(createUrqlClient)(owner)
+export default development

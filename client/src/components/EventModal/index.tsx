@@ -1,10 +1,11 @@
 import React from 'react'
 import CalendarForm from './Forms/CalendarForm'
+import DevelopmentForm from './Forms/DevelopmentForm'
 import OwnerForm from './Forms/OwnerForm'
 
 interface EventModalProps {
   className?: string
-  formType: 'Calendar' | 'Owner'
+  formType: 'Calendar' | 'Owner' | 'Development'
 }
 
 export const EventModal: React.FC<EventModalProps> = ({
@@ -17,6 +18,8 @@ export const EventModal: React.FC<EventModalProps> = ({
         return <CalendarForm />
       case 'Owner':
         return <OwnerForm />
+      case 'Development':
+        return <DevelopmentForm />
       default:
         return <></>
     }
