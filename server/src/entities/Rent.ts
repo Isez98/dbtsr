@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "type-graphql";
+import { Field, Int, ObjectType } from 'type-graphql'
 import {
   BaseEntity,
   Column,
@@ -7,64 +7,52 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { PropertyRental } from "./PropertyRental";
-import { User } from "./User";
+} from 'typeorm'
+import { PropertyRental } from './PropertyRental'
+import { User } from './User'
 
 @ObjectType()
 @Entity()
 export class Rent extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
-  id!: number;
+  id!: number
 
   @Field(() => String)
   @Column()
-  checkIn: Date;
+  checkIn: Date
 
   @Field(() => String)
   @Column()
-  checkOut: Date;
+  checkOut: Date
 
   @Field(() => String)
   @Column()
-  client: String;
+  client: String
 
   @Field()
   @Column()
-  rate: number;
+  rate: number
 
   @Field(() => Int)
   @Column()
-  deposit: number;
-
-  @Field(() => Int)
-  @Column()
-  cleaningFee: number;
-
-  @Field(() => Int)
-  @Column()
-  people: number;
-
-  @Field()
-  @Column()
-  extraGuestRate: number;
+  people: number
 
   @Field(() => String)
-  @Column("text")
-  notes: string;
+  @Column('text')
+  notes: string
 
   @ManyToOne(() => PropertyRental, (propertyRental) => propertyRental.rents)
-  property: PropertyRental;
+  property: PropertyRental
 
   @ManyToOne(() => User, (user) => user.rents)
-  renterId: number;
+  renterId: number
 
   @Field(() => String)
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt: Date
 
   @Field(() => String)
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt: Date
 }

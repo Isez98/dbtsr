@@ -53,7 +53,7 @@ export type Mutation = {
   changePassword: UserResponse;
   createDevelopment: DevelopmentResponse;
   createOwner: OwnerResponse;
-  createProperty: PropertyRental;
+  createProperty: PropertyRentalResponse;
   deleteDevelopment: Scalars['Boolean'];
   deleteOWner: Scalars['Boolean'];
   deleteProperty: Scalars['Boolean'];
@@ -144,27 +144,29 @@ export type OwnerResponse = {
 };
 
 export type PropertyInput = {
-  album: Scalars['String'];
+  album?: InputMaybe<Scalars['String']>;
   designation: Scalars['String'];
-  notes: Scalars['String'];
+  developmentId: Scalars['Float'];
+  notes?: InputMaybe<Scalars['String']>;
+  ownerId: Scalars['Float'];
 };
 
 export type PropertyRental = {
   __typename?: 'PropertyRental';
   album: Scalars['String'];
-  cleaningFee: Scalars['Float'];
-  completeRentControl: Scalars['Boolean'];
   createdAt: Scalars['String'];
-  deposit: Scalars['Float'];
   designation: Scalars['String'];
-  extraGuestRate: Scalars['Float'];
-  holidayRate: Scalars['Float'];
+  developmentId: Scalars['Int'];
   id: Scalars['Int'];
-  maxPeople: Scalars['Int'];
-  nightRate: Scalars['Float'];
   notes: Scalars['String'];
   ownerId: Scalars['Int'];
   updatedAt: Scalars['String'];
+};
+
+export type PropertyRentalResponse = {
+  __typename?: 'PropertyRentalResponse';
+  errors?: Maybe<Array<FieldError>>;
+  propertyRental?: Maybe<PropertyRental>;
 };
 
 export type Query = {
@@ -197,6 +199,12 @@ export type QueryOwnerArgs = {
 
 
 export type QueryOwnersArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
+};
+
+
+export type QueryPropertiesArgs = {
   cursor?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
 };

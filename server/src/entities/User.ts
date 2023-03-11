@@ -6,32 +6,32 @@ import {
   UpdateDateColumn,
   BaseEntity,
   OneToMany,
-} from "typeorm";
-import { ObjectType, Field, Int } from "type-graphql";
-import { Rent } from "./Rent";
+} from 'typeorm'
+import { ObjectType, Field, Int } from 'type-graphql'
+import { Rent } from './Rent'
 
 @ObjectType()
 @Entity()
 export class User extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
-  id!: number;
+  id!: number
 
   @Field()
   @Column({ unique: true })
-  email!: string;
+  email!: string
 
   @Column()
-  password!: string;
+  password!: string
 
   @OneToMany(() => Rent, (rent) => rent.renterId)
-  rents: Rent[];
+  rents: Rent[]
 
   @Field(() => String)
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt: Date
 
   @Field(() => String)
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt: Date
 }
