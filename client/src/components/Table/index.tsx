@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 interface TableProps {
   data: any
@@ -56,11 +56,18 @@ export const Table: React.FC<TableProps> = ({
                   onClick={() => rowClick(item.id)}
                 >
                   {columns.map((i, k) => {
-                    type ObjectKey = keyof typeof item
-                    const key = i.key as ObjectKey
+                    const keyDepth = i.key.split('.')
+                    let val: any = null
+                    keyDepth.map((field) => {
+                      if (val) {
+                        return (val = val[field])
+                      }
+                      val = item[field] as any
+                      return val
+                    })
                     return (
                       <td className="px-6 py-4" key={`td-${headerKey}-${k}`}>
-                        {item[key]}
+                        {val}
                       </td>
                     )
                   })}

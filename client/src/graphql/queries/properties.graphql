@@ -3,7 +3,13 @@ query Properties($limit: Int!, $cursor: String) {
     id
     designation
     ownerId
+    owner {
+      name
+    }
     developmentId
+    development {
+      name
+    }
     album
     notes
   }

@@ -48,18 +48,41 @@ export class PropertyRentalResolver {
     @Arg('cursor', () => String, { nullable: true }) cursor: string | null
   ): Promise<PropertyRental[]> {
     const realLimit = Math.min(50, limit)
-    const qb = getConnection()
-      .getRepository(PropertyRental)
-      .createQueryBuilder('d')
-      .orderBy('"createdAt"', 'DESC')
-      .take(realLimit)
 
+    const replacements: any[] = [realLimit]
     if (cursor) {
-      qb.where('"createdAt" <:cursor', {
-        cursor: new Date(parseInt(cursor)),
-      })
+      replacements.push(new Date(parseInt(cursor)))
     }
-    return qb.getMany()
+
+    const properties = await getConnection().query(
+      `
+    
+    select p.*, 
+    json_build_object('name', o.name) owner, 
+    json_build_object('name', d.name) development  
+    from "property_rental" p
+    inner join public.owner o on o.id = p."ownerId"
+    inner join public.developments d on d.id = p."developmentId"
+    ${cursor ? `where p."createdAt" < $2` : ''}
+    order by p."createdAt" DESC
+    limit $1
+    `,
+      replacements
+    )
+
+    // const qb = getConnection()
+    //   .getRepository(PropertyRental)
+    //   .createQueryBuilder('d')
+    //   .innerJoinAndSelect('d.owner', 'o', 'o.id = d."ownerId"')
+    //   .orderBy('d."createdAt"', 'DESC')
+    //   .take(realLimit)
+
+    // if (cursor) {
+    //   qb.where('d."createdAt" <:cursor', {
+    //     cursor: new Date(parseInt(cursor)),
+    //   })
+    // }
+    return properties
   }
 
   @Query(() => PropertyRental, { nullable: true })

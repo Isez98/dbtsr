@@ -36,13 +36,15 @@ export class PropertyRental extends BaseEntity {
   @Column()
   developmentId: number
 
-  @ManyToOne(() => Developments, (developments) => developments.properties)
+  @Field()
+  @ManyToOne(() => Developments, (development) => development.properties)
   development: Developments
 
   @Field(() => Int)
   @Column()
   ownerId: number
 
+  @Field()
   @ManyToOne(() => Owner, (owner) => owner.properties)
   owner: Owner
 

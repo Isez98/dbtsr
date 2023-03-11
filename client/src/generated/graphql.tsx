@@ -156,9 +156,11 @@ export type PropertyRental = {
   album: Scalars['String'];
   createdAt: Scalars['String'];
   designation: Scalars['String'];
+  development: Developments;
   developmentId: Scalars['Int'];
   id: Scalars['Int'];
   notes: Scalars['String'];
+  owner: Owner;
   ownerId: Scalars['Int'];
   updatedAt: Scalars['String'];
 };
@@ -329,7 +331,7 @@ export type PropertiesQueryVariables = Exact<{
 }>;
 
 
-export type PropertiesQuery = { __typename?: 'Query', properties: Array<{ __typename?: 'PropertyRental', id: number, designation: string, ownerId: number, developmentId: number, album: string, notes: string }> };
+export type PropertiesQuery = { __typename?: 'Query', properties: Array<{ __typename?: 'PropertyRental', id: number, designation: string, ownerId: number, developmentId: number, album: string, notes: string, owner: { __typename?: 'Owner', name: string }, development: { __typename?: 'Developments', name: string } }> };
 
 export const RegularErrorFragmentDoc = gql`
     fragment RegularError on FieldError {
@@ -513,7 +515,13 @@ export const PropertiesDocument = gql`
     id
     designation
     ownerId
+    owner {
+      name
+    }
     developmentId
+    development {
+      name
+    }
     album
     notes
   }

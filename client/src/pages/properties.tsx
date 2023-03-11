@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import AddButton from '../components/AddButton'
 import EventModal from '../components/EventModal'
 import Table from '../components/Table'
@@ -16,9 +16,11 @@ export const Properties = ({}) => {
   const columns = [
     { title: 'ID', key: 'id' },
     { title: 'Designation', key: 'designation' },
-    { title: 'Development', key: 'developmentId' },
-    { title: 'Owner', key: 'ownerId' },
+    { title: 'Development', key: 'development.name' },
+    { title: 'Owner', key: 'owner.name' },
   ]
+
+  useEffect(() => console.log(data), [])
 
   // function onRowClick(row: any) {
   //   router.push(`owner/${row}`)
