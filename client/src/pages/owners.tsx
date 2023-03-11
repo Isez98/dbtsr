@@ -1,16 +1,14 @@
 import { withUrqlClient } from 'next-urql'
 import { useRouter } from 'next/router'
-import React, { ReactElement, useContext } from 'react'
+import React, { useContext } from 'react'
 import AddButton from '../components/AddButton'
 import EventModal from '../components/EventModal'
-import PageFrame from '../components/PageFrame'
 import Table from '../components/Table'
 import GlobalContext from '../context/GlobalContext'
 import { useOwnersQuery } from '../generated/graphql'
 import { createUrqlClient } from '../utils/createUrqlClient'
-import { NextPageWithLayout } from './_app'
 
-export const Owners: NextPageWithLayout = ({}) => {
+export const Owners = ({}) => {
   const router = useRouter()
   const [{ data }] = useOwnersQuery({
     variables: { limit: 10 },
@@ -30,7 +28,7 @@ export const Owners: NextPageWithLayout = ({}) => {
   }
 
   return (
-    <PageFrame title="Owners">
+    <React.Fragment>
       {showEventModal && <EventModal className="z-20" formType="Owner" />}
       {data ? (
         <>
@@ -45,12 +43,8 @@ export const Owners: NextPageWithLayout = ({}) => {
       ) : (
         <>Nothing to see here...</>
       )}
-    </PageFrame>
+    </React.Fragment>
   )
-}
-
-Owners.getLayout = function getLayout(page: ReactElement) {
-  return page
 }
 
 export default withUrqlClient(createUrqlClient)(Owners)

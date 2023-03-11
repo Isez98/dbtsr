@@ -2,16 +2,12 @@ import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 import { useLogoutMutation, useMeQuery } from '../../generated/graphql'
 import { isServer } from '../../utils/isServer'
+import protectedRoutes from '../../utils/protectedRoutes'
 import { FullPageLoader } from '../FullPageLoader'
 
-interface PrivateRouteProps {
-  protectedRoutes: string[]
-}
+interface PrivateRouteProps {}
 
-export const PrivateRoute: React.FC<PrivateRouteProps> = ({
-  protectedRoutes,
-  children,
-}) => {
+export const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   const router = useRouter()
   const [{ data, fetching }] = useMeQuery({
     pause: isServer(),

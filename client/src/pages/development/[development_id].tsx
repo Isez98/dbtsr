@@ -1,17 +1,15 @@
 import { useRouter } from 'next/router'
 import React from 'react'
-import PageFrame from '../../components/PageFrame'
 import Wrapper from '../../components/Wrapper'
 import { useDevelopmentQuery } from '../../generated/graphql'
-import { NextPageWithLayout } from '../_app'
 
-export const development: NextPageWithLayout = ({}) => {
+export const development = ({}) => {
   const router = useRouter()
   const [{ data }] = useDevelopmentQuery({
     variables: { id: Number(router.query.development_id) },
   })
   return (
-    <PageFrame title="Owner">
+    <React.Fragment>
       <div>
         <Wrapper>
           <div className="flex justify-between">
@@ -29,7 +27,7 @@ export const development: NextPageWithLayout = ({}) => {
           </div>
         </Wrapper>
       </div>
-    </PageFrame>
+    </React.Fragment>
   )
 }
 

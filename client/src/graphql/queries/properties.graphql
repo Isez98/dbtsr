@@ -1,0 +1,10 @@
+query Properties($limit: Int!, $cursor: String) {
+  properties(limit: $limit, cursor: $cursor) {
+    id
+    designation
+    ownerId
+    developmentId
+    album
+    notes
+  }
+}

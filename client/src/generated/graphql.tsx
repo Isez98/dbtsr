@@ -323,6 +323,14 @@ export type OwnersQueryVariables = Exact<{
 
 export type OwnersQuery = { __typename?: 'Query', owners: Array<{ __typename?: 'Owner', id: number, createdAt: string, name: string, email: string, phone: string }> };
 
+export type PropertiesQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type PropertiesQuery = { __typename?: 'Query', properties: Array<{ __typename?: 'PropertyRental', id: number, designation: string, ownerId: number, developmentId: number, album: string, notes: string }> };
+
 export const RegularErrorFragmentDoc = gql`
     fragment RegularError on FieldError {
   field
@@ -498,4 +506,20 @@ export const OwnersDocument = gql`
 
 export function useOwnersQuery(options: Omit<Urql.UseQueryArgs<OwnersQueryVariables>, 'query'>) {
   return Urql.useQuery<OwnersQuery>({ query: OwnersDocument, ...options });
+};
+export const PropertiesDocument = gql`
+    query Properties($limit: Int!, $cursor: String) {
+  properties(limit: $limit, cursor: $cursor) {
+    id
+    designation
+    ownerId
+    developmentId
+    album
+    notes
+  }
+}
+    `;
+
+export function usePropertiesQuery(options: Omit<Urql.UseQueryArgs<PropertiesQueryVariables>, 'query'>) {
+  return Urql.useQuery<PropertiesQuery>({ query: PropertiesDocument, ...options });
 };
