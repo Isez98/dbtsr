@@ -20,10 +20,11 @@ export const PageFrame: React.FC<PageFrameProps> = ({ children, title }) => {
     if (title === '/') {
       return 'Home'
     }
-    return `${title.slice(1, 2).toUpperCase()}${title.slice(
-      2,
-      title.indexOf('/', 3)
-    )}`
+    let subPage = title.indexOf('/', 2)
+    if (subPage !== -1) {
+      return `${title.slice(1, 2).toUpperCase()}${title.slice(2, subPage)}`
+    }
+    return `${title.slice(1, 2).toUpperCase()}${title.slice(2)}`
   }
 
   if (data?.me === null) {
