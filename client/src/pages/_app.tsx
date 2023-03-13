@@ -1,39 +1,24 @@
-import { ReactElement, ReactNode } from 'react'
 import { NextPage } from 'next'
-import type { AppProps } from 'next/app'
+import type { AppProps, AppContext } from 'next/app'
 import PrivateRoute from '../components/PrivateRoute'
 import { withUrqlClient } from 'next-urql'
 import { createUrqlClient } from '../utils/createUrqlClient'
 import ContextWrapper from '../context/ContextWrapper'
 import '../styles/globals.css'
+import { useRouter } from 'next/router'
+import PageFrame from '../components/PageFrame'
 
-export type NextPageWithLayout = NextPage & {
-  getLayout?: (page: ReactElement) => ReactNode
-}
-
-type AppPropsWithLayout = AppProps & {
-  Component: NextPageWithLayout
-}
-
-function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-  // Add your protected routes here
-  const protectedRoutes = [
-    '/',
-    '/developments',
-    '/development',
-    '/owners',
-    '/owner',
-    '/properties',
-  ]
-  const getLayout = Component.getLayout || ((page: ReactElement) => page)
-
-  return getLayout(
-    <PrivateRoute protectedRoutes={protectedRoutes}>
+function MyApp({ Component, pageProps }: AppProps) {
+  const router = useRouter()
+  return (
+    <PrivateRoute>
       <ContextWrapper>
-        <Component {...pageProps} />
+        <PageFrame title={router.pathname}>
+          <Component {...pageProps} />
+        </PageFrame>
       </ContextWrapper>
     </PrivateRoute>
   )
 }
 
-export default withUrqlClient(createUrqlClient)(MyApp as NextPage<any, any>)
+export default withUrqlClient(createUrqlClient)(MyApp)

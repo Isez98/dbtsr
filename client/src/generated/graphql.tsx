@@ -53,7 +53,7 @@ export type Mutation = {
   changePassword: UserResponse;
   createDevelopment: DevelopmentResponse;
   createOwner: OwnerResponse;
-  createProperty: PropertyRental;
+  createProperty: PropertyRentalResponse;
   deleteDevelopment: Scalars['Boolean'];
   deleteOWner: Scalars['Boolean'];
   deleteProperty: Scalars['Boolean'];
@@ -144,36 +144,42 @@ export type OwnerResponse = {
 };
 
 export type PropertyInput = {
-  album: Scalars['String'];
+  album?: InputMaybe<Scalars['String']>;
   designation: Scalars['String'];
-  notes: Scalars['String'];
+  developmentId: Scalars['Float'];
+  notes?: InputMaybe<Scalars['String']>;
+  ownerId: Scalars['Float'];
 };
 
 export type PropertyRental = {
   __typename?: 'PropertyRental';
   album: Scalars['String'];
-  cleaningFee: Scalars['Float'];
-  completeRentControl: Scalars['Boolean'];
   createdAt: Scalars['String'];
-  deposit: Scalars['Float'];
   designation: Scalars['String'];
-  extraGuestRate: Scalars['Float'];
-  holidayRate: Scalars['Float'];
+  development: Developments;
+  developmentId: Scalars['Int'];
   id: Scalars['Int'];
-  maxPeople: Scalars['Int'];
-  nightRate: Scalars['Float'];
   notes: Scalars['String'];
+  owner: Owner;
   ownerId: Scalars['Int'];
   updatedAt: Scalars['String'];
+};
+
+export type PropertyRentalResponse = {
+  __typename?: 'PropertyRentalResponse';
+  errors?: Maybe<Array<FieldError>>;
+  propertyRental?: Maybe<PropertyRental>;
 };
 
 export type Query = {
   __typename?: 'Query';
   development?: Maybe<Developments>;
+  developmentProperties: Array<PropertyRental>;
   developments: Array<Developments>;
   hello: Scalars['String'];
   me?: Maybe<User>;
   owner?: Maybe<Owner>;
+  ownerProperties: Array<PropertyRental>;
   owners: Array<Owner>;
   properties: Array<PropertyRental>;
   property?: Maybe<PropertyRental>;
@@ -182,6 +188,13 @@ export type Query = {
 
 export type QueryDevelopmentArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryDevelopmentPropertiesArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  id: Scalars['Int'];
+  limit: Scalars['Int'];
 };
 
 
@@ -196,7 +209,20 @@ export type QueryOwnerArgs = {
 };
 
 
+export type QueryOwnerPropertiesArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  id: Scalars['Int'];
+  limit: Scalars['Int'];
+};
+
+
 export type QueryOwnersArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
+};
+
+
+export type QueryPropertiesArgs = {
   cursor?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
 };
@@ -287,6 +313,15 @@ export type DevelopmentQueryVariables = Exact<{
 
 export type DevelopmentQuery = { __typename?: 'Query', development?: { __typename?: 'Developments', name: string, location: string } | null };
 
+export type DevelopmentPropertiesQueryVariables = Exact<{
+  id: Scalars['Int'];
+  limit: Scalars['Int'];
+  cursor?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type DevelopmentPropertiesQuery = { __typename?: 'Query', developmentProperties: Array<{ __typename?: 'PropertyRental', id: number, designation: string, ownerId: number, developmentId: number, album: string, notes: string, owner: { __typename?: 'Owner', name: string }, development: { __typename?: 'Developments', name: string } }> };
+
 export type DevelopmentsQueryVariables = Exact<{
   limit: Scalars['Int'];
   cursor?: InputMaybe<Scalars['String']>;
@@ -307,6 +342,15 @@ export type OwnerQueryVariables = Exact<{
 
 export type OwnerQuery = { __typename?: 'Query', owner?: { __typename?: 'Owner', name: string, email: string, phone: string } | null };
 
+export type OwnerPropertiesQueryVariables = Exact<{
+  id: Scalars['Int'];
+  limit: Scalars['Int'];
+  cursor?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type OwnerPropertiesQuery = { __typename?: 'Query', ownerProperties: Array<{ __typename?: 'PropertyRental', id: number, designation: string, ownerId: number, developmentId: number, album: string, notes: string, owner: { __typename?: 'Owner', name: string }, development: { __typename?: 'Developments', name: string } }> };
+
 export type OwnersQueryVariables = Exact<{
   limit: Scalars['Int'];
   cursor?: InputMaybe<Scalars['String']>;
@@ -314,6 +358,14 @@ export type OwnersQueryVariables = Exact<{
 
 
 export type OwnersQuery = { __typename?: 'Query', owners: Array<{ __typename?: 'Owner', id: number, createdAt: string, name: string, email: string, phone: string }> };
+
+export type PropertiesQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type PropertiesQuery = { __typename?: 'Query', properties: Array<{ __typename?: 'PropertyRental', id: number, designation: string, ownerId: number, developmentId: number, album: string, notes: string, owner: { __typename?: 'Owner', name: string }, development: { __typename?: 'Developments', name: string } }> };
 
 export const RegularErrorFragmentDoc = gql`
     fragment RegularError on FieldError {
@@ -438,6 +490,28 @@ export const DevelopmentDocument = gql`
 export function useDevelopmentQuery(options: Omit<Urql.UseQueryArgs<DevelopmentQueryVariables>, 'query'>) {
   return Urql.useQuery<DevelopmentQuery>({ query: DevelopmentDocument, ...options });
 };
+export const DevelopmentPropertiesDocument = gql`
+    query DevelopmentProperties($id: Int!, $limit: Int!, $cursor: String) {
+  developmentProperties(id: $id, limit: $limit, cursor: $cursor) {
+    id
+    designation
+    ownerId
+    owner {
+      name
+    }
+    developmentId
+    development {
+      name
+    }
+    album
+    notes
+  }
+}
+    `;
+
+export function useDevelopmentPropertiesQuery(options: Omit<Urql.UseQueryArgs<DevelopmentPropertiesQueryVariables>, 'query'>) {
+  return Urql.useQuery<DevelopmentPropertiesQuery>({ query: DevelopmentPropertiesDocument, ...options });
+};
 export const DevelopmentsDocument = gql`
     query Developments($limit: Int!, $cursor: String) {
   developments(limit: $limit, cursor: $cursor) {
@@ -476,6 +550,28 @@ export const OwnerDocument = gql`
 export function useOwnerQuery(options: Omit<Urql.UseQueryArgs<OwnerQueryVariables>, 'query'>) {
   return Urql.useQuery<OwnerQuery>({ query: OwnerDocument, ...options });
 };
+export const OwnerPropertiesDocument = gql`
+    query OwnerProperties($id: Int!, $limit: Int!, $cursor: String) {
+  ownerProperties(id: $id, limit: $limit, cursor: $cursor) {
+    id
+    designation
+    ownerId
+    owner {
+      name
+    }
+    developmentId
+    development {
+      name
+    }
+    album
+    notes
+  }
+}
+    `;
+
+export function useOwnerPropertiesQuery(options: Omit<Urql.UseQueryArgs<OwnerPropertiesQueryVariables>, 'query'>) {
+  return Urql.useQuery<OwnerPropertiesQuery>({ query: OwnerPropertiesDocument, ...options });
+};
 export const OwnersDocument = gql`
     query Owners($limit: Int!, $cursor: String) {
   owners(limit: $limit, cursor: $cursor) {
@@ -490,4 +586,26 @@ export const OwnersDocument = gql`
 
 export function useOwnersQuery(options: Omit<Urql.UseQueryArgs<OwnersQueryVariables>, 'query'>) {
   return Urql.useQuery<OwnersQuery>({ query: OwnersDocument, ...options });
+};
+export const PropertiesDocument = gql`
+    query Properties($limit: Int!, $cursor: String) {
+  properties(limit: $limit, cursor: $cursor) {
+    id
+    designation
+    ownerId
+    owner {
+      name
+    }
+    developmentId
+    development {
+      name
+    }
+    album
+    notes
+  }
+}
+    `;
+
+export function usePropertiesQuery(options: Omit<Urql.UseQueryArgs<PropertiesQueryVariables>, 'query'>) {
+  return Urql.useQuery<PropertiesQuery>({ query: PropertiesDocument, ...options });
 };

@@ -1,16 +1,14 @@
 import { withUrqlClient } from 'next-urql'
 import router from 'next/router'
-import React, { ReactElement, useContext } from 'react'
+import React, { useContext } from 'react'
 import AddButton from '../components/AddButton'
 import EventModal from '../components/EventModal'
-import PageFrame from '../components/PageFrame'
 import Table from '../components/Table'
 import GlobalContext from '../context/GlobalContext'
 import { useDevelopmentsQuery } from '../generated/graphql'
 import { createUrqlClient } from '../utils/createUrqlClient'
-import { NextPageWithLayout } from './_app'
 
-export const Developments: NextPageWithLayout = ({}) => {
+export const Developments = ({}) => {
   const [{ data }] = useDevelopmentsQuery({
     variables: { limit: 10 },
   })
@@ -26,7 +24,7 @@ export const Developments: NextPageWithLayout = ({}) => {
   }
 
   return (
-    <PageFrame title="Developments">
+    <React.Fragment>
       {showEventModal && <EventModal className="z-20" formType="Development" />}
       {data ? (
         <>
@@ -41,12 +39,8 @@ export const Developments: NextPageWithLayout = ({}) => {
       ) : (
         <>Nothing to see here...</>
       )}
-    </PageFrame>
+    </React.Fragment>
   )
-}
-
-Developments.getLayout = function getLayout(page: ReactElement) {
-  return page
 }
 
 export default withUrqlClient(createUrqlClient)(Developments)

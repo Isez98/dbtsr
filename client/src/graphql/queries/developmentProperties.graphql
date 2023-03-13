@@ -1,0 +1,16 @@
+query DevelopmentProperties($id: Int!, $limit: Int!, $cursor: String) {
+  developmentProperties(id: $id, limit: $limit, cursor: $cursor) {
+    id
+    designation
+    ownerId
+    owner {
+      name
+    }
+    developmentId
+    development {
+      name
+    }
+    album
+    notes
+  }
+}
