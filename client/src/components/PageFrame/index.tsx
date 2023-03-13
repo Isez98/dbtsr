@@ -69,11 +69,13 @@ export const PageFrame: React.FC<PageFrameProps> = ({ children, title }) => {
                 }`}
               >
                 <NavBar />
-                <main className="justify-content-center container h-auto">
+                <main className="justify-content-center h-95 container mb-5">
                   {children}
                 </main>
                 <footer className="w-100 flex justify-center">
-                  Desert By The Sea Rentals
+                  <p className="mt-3 text-center text-xs text-gray-500">
+                    &copy;2020 Desert By The Sea Rentals. All rights reserved.
+                  </p>
                 </footer>
               </div>
             </div>

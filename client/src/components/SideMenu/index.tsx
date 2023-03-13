@@ -1,9 +1,8 @@
 import React, { ReactElement, useContext } from 'react'
 import Link from 'next/link'
 import GlobalContext from '../../context/GlobalContext'
-import { CloseIcon, IconProps } from '@chakra-ui/icons'
+import { CloseIcon } from '@chakra-ui/icons'
 import styles from './styles.module.scss'
-import { ComponentWithAs } from '@chakra-ui/system'
 
 interface SideMenuProps {
   items: { page: string; icon: ReactElement }[]
@@ -15,7 +14,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({ items, className }) => {
 
   return (
     <div
-      className={`Navbar__Container flex h-full flex-col capitalize ${
+      className={`Navbar__Container flex h-full flex-col capitalize text-white ${
         size ? 'bar__close' : 'bar__open'
       }`}
     >

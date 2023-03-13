@@ -3,6 +3,7 @@ import React, { useContext } from 'react'
 import { ArrowRightIcon } from '@chakra-ui/icons'
 import GlobalContext from '../../context/GlobalContext'
 import { useLogoutMutation } from '../../generated/graphql'
+import styles from './styles.module.scss'
 
 interface NavBarProps {}
 
@@ -11,7 +12,11 @@ export const NavBar: React.FC<NavBarProps> = () => {
   const [, logout] = useLogoutMutation()
 
   return (
-    <div className="ml-auto flex w-full justify-between bg-red-700 p-4 text-white">
+    <div
+      className={
+        'ml-auto flex w-full justify-between p-4 text-white ' + styles.navbar
+      }
+    >
       {size === true ? (
         <button onClick={() => setSize(!size)}>
           <ArrowRightIcon />
