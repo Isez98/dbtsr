@@ -67,7 +67,7 @@ export const ChangePassword: NextPage = () => {
                   ) : null}
                   <div className="mt-3 flex items-center justify-center">
                     <button
-                      className="focus:shadow-outline rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700 focus:outline-none"
+                      className="focus:shadow-outline rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none"
                       type="submit"
                       onClick={() => isSubmitting}
                     >
