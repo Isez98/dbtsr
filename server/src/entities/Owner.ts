@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "type-graphql";
+import { Field, Int, ObjectType } from 'type-graphql'
 import {
   BaseEntity,
   Column,
@@ -7,36 +7,36 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { PropertyRental } from "./PropertyRental";
+} from 'typeorm'
+import { PropertyRental } from './PropertyRental'
 
 @ObjectType()
 @Entity()
 export class Owner extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
-  id!: number;
+  id!: number
 
   @Field(() => String)
   @Column()
-  name!: string;
+  name!: string
 
   @Field(() => String)
   @Column()
-  email: string;
+  email: string
 
   @Field(() => String)
   @Column()
-  phone: string;
+  phone: string
 
   @OneToMany(() => PropertyRental, (propertyRental) => propertyRental.owner)
-  properties: PropertyRental[];
+  properties: PropertyRental[]
 
   @Field(() => String)
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt: Date
 
   @Field(() => String)
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt: Date
 }

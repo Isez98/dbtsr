@@ -55,33 +55,81 @@ export class PropertyRentalResolver {
     }
 
     const properties = await getConnection().query(
-      `
-    
-    select p.*, 
-    json_build_object('name', o.name) owner, 
-    json_build_object('name', d.name) development  
-    from "property_rental" p
-    inner join public.owner o on o.id = p."ownerId"
-    inner join public.developments d on d.id = p."developmentId"
-    ${cursor ? `where p."createdAt" < $2` : ''}
-    order by p."createdAt" DESC
-    limit $1
+      `    
+        select p.*, 
+        json_build_object('name', o.name) owner, 
+        json_build_object('name', d.name) development  
+        from "property_rental" p
+        inner join public.owner o on o.id = p."ownerId"
+        inner join public.developments d on d.id = p."developmentId"
+        ${cursor ? `where p."createdAt" < $2` : ''}
+        order by p."createdAt" DESC
+        limit $1
     `,
       replacements
     )
+    return properties
+  }
 
-    // const qb = getConnection()
-    //   .getRepository(PropertyRental)
-    //   .createQueryBuilder('d')
-    //   .innerJoinAndSelect('d.owner', 'o', 'o.id = d."ownerId"')
-    //   .orderBy('d."createdAt"', 'DESC')
-    //   .take(realLimit)
+  @Query(() => [PropertyRental])
+  async ownerProperties(
+    @Arg('id', () => Int) id: number,
+    @Arg('limit', () => Int) limit: number,
+    @Arg('cursor', () => String, { nullable: true }) cursor: string | null
+  ): Promise<PropertyRental[]> {
+    const realLimit = Math.min(50, limit)
 
-    // if (cursor) {
-    //   qb.where('d."createdAt" <:cursor', {
-    //     cursor: new Date(parseInt(cursor)),
-    //   })
-    // }
+    const replacements: any[] = [id, realLimit]
+    if (cursor) {
+      replacements.push(new Date(parseInt(cursor)))
+    }
+
+    const properties = await getConnection().query(
+      `
+        select p.*, 
+        json_build_object('name', o.name) owner, 
+        json_build_object('name', d.name) development  
+        from "property_rental" p
+        inner join public.owner o on o.id = p."ownerId"
+        inner join public.developments d on d.id = p."developmentId"
+        where p."ownerId" = $1
+        ${cursor ? `and p."createdAt" < $3` : ''}
+        order by p."createdAt" DESC
+        limit $2
+      `,
+      replacements
+    )
+    return properties
+  }
+
+  @Query(() => [PropertyRental])
+  async developmentProperties(
+    @Arg('id', () => Int) id: number,
+    @Arg('limit', () => Int) limit: number,
+    @Arg('cursor', () => String, { nullable: true }) cursor: string | null
+  ): Promise<PropertyRental[]> {
+    const realLimit = Math.min(50, limit)
+
+    const replacements: any[] = [id, realLimit]
+    if (cursor) {
+      replacements.push(new Date(parseInt(cursor)))
+    }
+
+    const properties = await getConnection().query(
+      `
+        select p.*,
+        json_build_object('name', o.name) owner, 
+        json_build_object('name', d.name) development  
+        from "property_rental" p
+        inner join public.owner o on o.id = p."ownerId"
+        inner join public.developments d on d.id = p."developmentId"
+        where p."developmentId" = $1
+        ${cursor ? `and p."createdAt" < $3` : ''}
+        order by p."createdAt" DESC
+        limit $2
+      `,
+      replacements
+    )
     return properties
   }
 

@@ -178,6 +178,7 @@ export type Query = {
   hello: Scalars['String'];
   me?: Maybe<User>;
   owner?: Maybe<Owner>;
+  ownerProperties: Array<PropertyRental>;
   owners: Array<Owner>;
   properties: Array<PropertyRental>;
   property?: Maybe<PropertyRental>;
@@ -197,6 +198,13 @@ export type QueryDevelopmentsArgs = {
 
 export type QueryOwnerArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryOwnerPropertiesArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  id: Scalars['Int'];
+  limit: Scalars['Int'];
 };
 
 
@@ -316,6 +324,15 @@ export type OwnerQueryVariables = Exact<{
 
 
 export type OwnerQuery = { __typename?: 'Query', owner?: { __typename?: 'Owner', name: string, email: string, phone: string } | null };
+
+export type OwnerPropertiesQueryVariables = Exact<{
+  id: Scalars['Int'];
+  limit: Scalars['Int'];
+  cursor?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type OwnerPropertiesQuery = { __typename?: 'Query', ownerProperties: Array<{ __typename?: 'PropertyRental', id: number, designation: string, ownerId: number, developmentId: number, album: string, notes: string, owner: { __typename?: 'Owner', name: string }, development: { __typename?: 'Developments', name: string } }> };
 
 export type OwnersQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -493,6 +510,28 @@ export const OwnerDocument = gql`
 
 export function useOwnerQuery(options: Omit<Urql.UseQueryArgs<OwnerQueryVariables>, 'query'>) {
   return Urql.useQuery<OwnerQuery>({ query: OwnerDocument, ...options });
+};
+export const OwnerPropertiesDocument = gql`
+    query OwnerProperties($id: Int!, $limit: Int!, $cursor: String) {
+  ownerProperties(id: $id, limit: $limit, cursor: $cursor) {
+    id
+    designation
+    ownerId
+    owner {
+      name
+    }
+    developmentId
+    development {
+      name
+    }
+    album
+    notes
+  }
+}
+    `;
+
+export function useOwnerPropertiesQuery(options: Omit<Urql.UseQueryArgs<OwnerPropertiesQueryVariables>, 'query'>) {
+  return Urql.useQuery<OwnerPropertiesQuery>({ query: OwnerPropertiesDocument, ...options });
 };
 export const OwnersDocument = gql`
     query Owners($limit: Int!, $cursor: String) {
