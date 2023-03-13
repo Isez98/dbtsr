@@ -174,6 +174,7 @@ export type PropertyRentalResponse = {
 export type Query = {
   __typename?: 'Query';
   development?: Maybe<Developments>;
+  developmentProperties: Array<PropertyRental>;
   developments: Array<Developments>;
   hello: Scalars['String'];
   me?: Maybe<User>;
@@ -187,6 +188,13 @@ export type Query = {
 
 export type QueryDevelopmentArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryDevelopmentPropertiesArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  id: Scalars['Int'];
+  limit: Scalars['Int'];
 };
 
 
@@ -304,6 +312,15 @@ export type DevelopmentQueryVariables = Exact<{
 
 
 export type DevelopmentQuery = { __typename?: 'Query', development?: { __typename?: 'Developments', name: string, location: string } | null };
+
+export type DevelopmentPropertiesQueryVariables = Exact<{
+  id: Scalars['Int'];
+  limit: Scalars['Int'];
+  cursor?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type DevelopmentPropertiesQuery = { __typename?: 'Query', developmentProperties: Array<{ __typename?: 'PropertyRental', id: number, designation: string, ownerId: number, developmentId: number, album: string, notes: string, owner: { __typename?: 'Owner', name: string }, development: { __typename?: 'Developments', name: string } }> };
 
 export type DevelopmentsQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -472,6 +489,28 @@ export const DevelopmentDocument = gql`
 
 export function useDevelopmentQuery(options: Omit<Urql.UseQueryArgs<DevelopmentQueryVariables>, 'query'>) {
   return Urql.useQuery<DevelopmentQuery>({ query: DevelopmentDocument, ...options });
+};
+export const DevelopmentPropertiesDocument = gql`
+    query DevelopmentProperties($id: Int!, $limit: Int!, $cursor: String) {
+  developmentProperties(id: $id, limit: $limit, cursor: $cursor) {
+    id
+    designation
+    ownerId
+    owner {
+      name
+    }
+    developmentId
+    development {
+      name
+    }
+    album
+    notes
+  }
+}
+    `;
+
+export function useDevelopmentPropertiesQuery(options: Omit<Urql.UseQueryArgs<DevelopmentPropertiesQueryVariables>, 'query'>) {
+  return Urql.useQuery<DevelopmentPropertiesQuery>({ query: DevelopmentPropertiesDocument, ...options });
 };
 export const DevelopmentsDocument = gql`
     query Developments($limit: Int!, $cursor: String) {
