@@ -1,18 +1,22 @@
 import { withUrqlClient } from 'next-urql'
 import router from 'next/router'
-import React, { useContext } from 'react'
+import React, { useState } from 'react'
 import AddButton from '../components/AddButton'
 import EventModal from '../components/EventModal'
 import Table from '../components/Table'
-import GlobalContext from '../context/GlobalContext'
-import { useDevelopmentsQuery } from '../generated/graphql'
+import {
+  useCreateDevelopmentMutation,
+  useDevelopmentsQuery,
+} from '../generated/graphql'
 import { createUrqlClient } from '../utils/createUrqlClient'
+import { toErrorMap } from '../utils/toErrorMap'
 
 export const Developments = ({}) => {
   const [{ data }] = useDevelopmentsQuery({
     variables: { limit: 10 },
   })
-  const { showEventModal } = useContext(GlobalContext)
+  const [showEventModal, setShowEventModal] = useState(false)
+  const [, createDevelopment] = useCreateDevelopmentMutation()
 
   const columns = [
     { title: 'Name', key: 'name' },
@@ -25,10 +29,27 @@ export const Developments = ({}) => {
 
   return (
     <React.Fragment>
-      {showEventModal && <EventModal className="z-20" formType="Development" />}
+      {showEventModal && (
+        <EventModal
+          className="z-20"
+          formType="Development"
+          modalTitle="Add Development"
+          closeEvent={() => setShowEventModal(false)}
+          onSubmit={async (values, { setErrors }) => {
+            const response = await createDevelopment(values)
+            if (response.data?.createDevelopment.errors) {
+              setErrors(toErrorMap(response.data.createDevelopment.errors))
+            } else if (response.data?.createDevelopment.development) {
+              //   // works
+              setShowEventModal(false)
+            }
+          }}
+          initialValues={{ name: '', location: '', logo: '' }}
+        />
+      )}
       {data ? (
         <>
-          <AddButton />
+          <AddButton onClick={() => setShowEventModal(true)} />
           <Table
             columns={columns}
             data={data.developments}

@@ -2,9 +2,9 @@ import React from 'react'
 import { Form } from 'formik'
 import InputField from '../../../InputField'
 
-interface OwnerFormProps {}
+interface PropertyFormProps {}
 
-const OwnerForm: React.FC<OwnerFormProps> = () => {
+const PropertyForm: React.FC<PropertyFormProps> = ({}) => {
   return (
     <Form>
       <div className="mb-4">
@@ -39,4 +39,4 @@ const OwnerForm: React.FC<OwnerFormProps> = () => {
   )
 }
 
-export default OwnerForm
+export default PropertyForm

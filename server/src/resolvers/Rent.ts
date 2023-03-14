@@ -95,7 +95,7 @@ export class RentResolver {
       return {
         errors: [
           {
-            field: '',
+            field: 'Check in and Check out',
             message: 'Rent already exist for this property at the given dates!',
           },
         ],
