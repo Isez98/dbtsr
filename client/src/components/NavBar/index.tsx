@@ -1,33 +1,31 @@
 import Link from 'next/link'
 import React, { useContext } from 'react'
+import { ArrowRightIcon } from '@chakra-ui/icons'
 import GlobalContext from '../../context/GlobalContext'
 import { useLogoutMutation } from '../../generated/graphql'
+import styles from './styles.module.scss'
 
-interface NavBarProps {
-  routes: string[]
-}
+interface NavBarProps {}
 
-export const NavBar: React.FC<NavBarProps> = ({ routes }) => {
+export const NavBar: React.FC<NavBarProps> = () => {
   const { size, setSize } = useContext(GlobalContext)
   const [, logout] = useLogoutMutation()
 
   return (
-    <div className="ml-auto flex w-full justify-between bg-red-700 p-4 text-white">
+    <div
+      className={
+        'ml-auto flex w-full justify-between p-4 text-white ' + styles.navbar
+      }
+    >
       {size === true ? (
-        <button onClick={() => setSize(!size)}>Open</button>
+        <button onClick={() => setSize(!size)}>
+          <ArrowRightIcon />
+        </button>
       ) : null}
 
-      <div className="flex">
-        {routes.map((item, key) => {
-          return (
-            <div key={`Nav-item-${key}`} className="mr-5 capitalize">
-              <Link href={`/${item === 'home' ? '' : item}`}>{item}</Link>
-            </div>
-          )
-        })}
-      </div>
+      <div className="flex"></div>
       <span>
-        <span className="mr-5">Hello there!</span>
+        <span className="mr-5">Profile</span>
         <button
           onClick={() => {
             logout()

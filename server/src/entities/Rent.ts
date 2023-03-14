@@ -42,11 +42,19 @@ export class Rent extends BaseEntity {
   @Column('text')
   notes: string
 
+  @Field(() => Int)
+  @Column()
+  propertyId: number
+
   @ManyToOne(() => PropertyRental, (propertyRental) => propertyRental.rents)
   property: PropertyRental
 
+  @Field(() => Int)
+  @Column()
+  userId: number
+
   @ManyToOne(() => User, (user) => user.rents)
-  renterId: number
+  user: User
 
   @Field(() => String)
   @CreateDateColumn()

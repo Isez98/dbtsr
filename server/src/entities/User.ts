@@ -24,7 +24,7 @@ export class User extends BaseEntity {
   @Column()
   password!: string
 
-  @OneToMany(() => Rent, (rent) => rent.renterId)
+  @OneToMany(() => Rent, (rent) => rent.userId)
   rents: Rent[]
 
   @Field(() => String)

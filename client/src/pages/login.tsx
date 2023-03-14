@@ -53,7 +53,7 @@ export const Login: React.FC<LoginProps> = ({}) => {
                 </div>
                 <div className="flex items-center justify-between">
                   <button
-                    className="focus:shadow-outline rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700 focus:outline-none"
+                    className="focus:shadow-outline rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none"
                     type="submit"
                     onClick={() => isSubmitting}
                   >
