@@ -10,7 +10,8 @@ interface CalendarProps {}
 
 export const Calendar: React.FC<CalendarProps> = ({}) => {
   const [currentMonth, setCurrentMonth] = useState(getMonth())
-  const { monthIndex, showEventModal } = useContext(GlobalContext)
+  const { monthIndex, showEventModal, setShowEventModal } =
+    useContext(GlobalContext)
 
   useEffect(() => {
     setCurrentMonth(getMonth(monthIndex))
@@ -18,7 +19,17 @@ export const Calendar: React.FC<CalendarProps> = ({}) => {
 
   return (
     <React.Fragment>
-      {showEventModal && <EventModal formType="Calendar" />}
+      {showEventModal && (
+        <EventModal
+          formType="Calendar"
+          modalTitle="Add Rent"
+          closeEvent={() => setShowEventModal(false)}
+          onSubmit={async (values: any, { setErrors }: any) => {
+            setShowEventModal(false)
+          }}
+          initialValues={{}}
+        />
+      )}
       <div className="flex h-3/4 w-4/5 flex-col">
         <CalendarHeader />
         <div className="flex flex-1">
