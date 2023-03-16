@@ -31,6 +31,19 @@ export const Owners = ({}) => {
 
   return (
     <React.Fragment>
+      {data ? (
+        <>
+          <AddButton onClick={() => setShowEventModal(true)} />
+          <Table
+            columns={columns}
+            data={data.owners}
+            rowClick={onRowClick}
+            className="p-6"
+          />
+        </>
+      ) : (
+        <>Nothing to see here...</>
+      )}
       {showEventModal && (
         <EventModal
           className="z-20"
@@ -48,19 +61,6 @@ export const Owners = ({}) => {
           }}
           initialValues={{ name: '', email: '', phone: '' }}
         />
-      )}
-      {data ? (
-        <>
-          <AddButton onClick={() => setShowEventModal(true)} />
-          <Table
-            columns={columns}
-            data={data.owners}
-            rowClick={onRowClick}
-            className="p-6"
-          />
-        </>
-      ) : (
-        <>Nothing to see here...</>
       )}
     </React.Fragment>
   )

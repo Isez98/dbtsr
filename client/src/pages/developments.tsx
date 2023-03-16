@@ -30,6 +30,19 @@ export const Developments = ({}) => {
 
   return (
     <React.Fragment>
+      {data ? (
+        <>
+          <AddButton onClick={() => setShowEventModal(true)} />
+          <Table
+            columns={columns}
+            data={data.developments}
+            rowClick={onRowClick}
+            className="p-6"
+          />
+        </>
+      ) : (
+        <>Nothing to see here...</>
+      )}
       {showEventModal && (
         <EventModal
           className="z-20"
@@ -47,19 +60,6 @@ export const Developments = ({}) => {
           }}
           initialValues={{ name: '', location: '', logo: '' }}
         />
-      )}
-      {data ? (
-        <>
-          <AddButton onClick={() => setShowEventModal(true)} />
-          <Table
-            columns={columns}
-            data={data.developments}
-            rowClick={onRowClick}
-            className="p-6"
-          />
-        </>
-      ) : (
-        <>Nothing to see here...</>
       )}
     </React.Fragment>
   )

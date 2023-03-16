@@ -33,6 +33,14 @@ export const Properties = ({}) => {
 
   return (
     <React.Fragment>
+      {data ? (
+        <>
+          <AddButton onClick={() => setShowEventModal(true)} />
+          <Table columns={columns} data={data.properties} className="p-6" />
+        </>
+      ) : (
+        <>Nothing to see here...</>
+      )}
       {showEventModal && (
         <EventModal
           className="z-20"
@@ -50,14 +58,6 @@ export const Properties = ({}) => {
           }}
           initialValues={{ name: '', email: '', phone: '' }}
         />
-      )}
-      {data ? (
-        <>
-          <AddButton onClick={() => setShowEventModal(true)} />
-          <Table columns={columns} data={data.properties} className="p-6" />
-        </>
-      ) : (
-        <>Nothing to see here...</>
       )}
     </React.Fragment>
   )

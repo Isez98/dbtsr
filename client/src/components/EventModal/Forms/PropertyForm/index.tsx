@@ -8,23 +8,29 @@ const PropertyForm: React.FC<PropertyFormProps> = ({}) => {
   return (
     <Form>
       <div className="mb-4">
-        <InputField name="name" label="Name" placeholder="Full Name" required />
-      </div>
-      <div className="mb-6">
         <InputField
-          name="email"
-          label="Email"
-          placeholder="username@gmail.com"
-          type={'email'}
+          name="ownerId"
+          label="Owner"
+          placeholder="Full Name"
           required
         />
       </div>
-      <div>
+      <div className="mb-6">
         <InputField
-          name="phone"
-          label="Phone"
-          placeholder="(000)-000-000"
-          type={'tel'}
+          name="developmentId"
+          label="Development"
+          placeholder="Princesa de Peñasco"
+          type={'text'}
+          required
+        />
+      </div>
+      <div className="mb-6">
+        <InputField
+          name="designation"
+          label="Designation"
+          placeholder="A-101"
+          type={'text'}
+          required
         />
       </div>
       <div className="mt-5 flex items-center justify-center">

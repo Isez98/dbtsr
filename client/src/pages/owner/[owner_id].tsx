@@ -2,6 +2,8 @@ import { withUrqlClient } from 'next-urql'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import AddButton from '../../components/AddButton'
+import EventModal from '../../components/EventModal'
+import { Subjects } from '../../components/EventModal/subjects'
 import Table from '../../components/Table'
 import { useOwnerPropertiesQuery, useOwnerQuery } from '../../generated/graphql'
 import { createUrqlClient } from '../../utils/createUrqlClient'
@@ -33,6 +35,7 @@ export const owner = ({}) => {
         </span>
       </div>
       <br />
+
       <h3>Properties:</h3>
       <div className="mt-2">
         {properties ? (
@@ -48,6 +51,22 @@ export const owner = ({}) => {
           <>Nothing to see here...</>
         )}
       </div>
+      {showEventModal && (
+        <EventModal
+          className=""
+          formType={Subjects.AddPropertyOwner}
+          closeEvent={() => setShowEventModal(false)}
+          modalTitle={`Add Property To ${owner?.owner?.name}`}
+          onSubmit={async (values: any, { setErrors }: any) => {}}
+          initialValues={{
+            ownerId: '',
+            designation: '',
+            developmentId: '',
+            notes: '',
+            album: '',
+          }}
+        />
+      )}
     </React.Fragment>
   )
 }

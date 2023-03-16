@@ -40,10 +40,8 @@ export const EventModal: React.FC<EventModalProps> = ({
   }
 
   return (
-    <div
-      className={`fixed top-0 left-0 flex h-screen w-full items-center justify-center ${className}`}
-    >
-      <div className="w-1/4 rounded-lg bg-white shadow-2xl">
+    <div className={`relative ${className}`}>
+      <div className="absolute left-0 -top-96 w-full rounded-lg bg-white shadow-2xl md:left-24 md:-top-52 md:w-3/4 lg:-top-0 lg:left-1/4 lg:w-2/4">
         <header className="flex items-center justify-between bg-gray-100 px-4 py-2">
           <span className="text-gray-400">
             <DragHandleIcon />
