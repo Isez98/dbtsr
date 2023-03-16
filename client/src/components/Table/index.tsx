@@ -53,7 +53,9 @@ export const Table: React.FC<TableProps> = ({
                 <tr
                   key={`tr-${headerKey}`}
                   className="cursor-pointer duration-300 ease-in hover:bg-gray-500"
-                  onClick={() => rowClick(item.id)}
+                  onClick={() => {
+                    rowClick(item.id)
+                  }}
                 >
                   {columns.map((i, k) => {
                     const keyDepth = i.key.split('.')

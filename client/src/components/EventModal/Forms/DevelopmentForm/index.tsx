@@ -8,13 +8,21 @@ export const DevelopmentForm: React.FC = ({}) => {
       <div className="mb-4">
         <InputField name="name" label="Name" placeholder="Full Name" required />
       </div>
-      <div className="">
+      <div className="mb-4">
         <InputField
           name="location"
           label="Location"
           placeholder="1234 W. Oak Boulevard"
-          type={'text'}
           required
+        />
+      </div>
+      <div>
+        <InputField
+          name="logo"
+          label="Logo"
+          placeholder="Insert development image file (*.png, *.jpg, *.jpeg"
+          type={'file'}
+          accept=".png, .jpg, .jpeg"
         />
       </div>
       <div className="mt-5 flex items-center justify-center">

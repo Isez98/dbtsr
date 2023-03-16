@@ -23,7 +23,7 @@ export const InputField: React.FC<InputFieldProps> = ({
       <input
         {...field}
         {...props}
-        className={`focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none 
+        className={`focus:shadow-outline w-full appearance-none rounded border border-gray-300 py-2 px-3 leading-tight text-gray-700 shadow
         ${error ? 'border-red-500' : ''}`}
         id={field.name}
       />

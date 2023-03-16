@@ -1,6 +1,6 @@
 import { withUrqlClient } from 'next-urql'
 import { useRouter } from 'next/router'
-import React from 'react'
+import React, { useState } from 'react'
 import AddButton from '../../components/AddButton'
 import Table from '../../components/Table'
 import { useOwnerPropertiesQuery, useOwnerQuery } from '../../generated/graphql'
@@ -14,6 +14,7 @@ export const owner = ({}) => {
   const [{ data: properties }] = useOwnerPropertiesQuery({
     variables: { id: Number(router.query.owner_id), limit: 10 },
   })
+  const [showEventModal, setShowEventModal] = useState(false)
 
   const columns = [
     { title: 'ID', key: 'id' },
@@ -36,7 +37,7 @@ export const owner = ({}) => {
       <div className="mt-2">
         {properties ? (
           <>
-            <AddButton />
+            <AddButton onClick={() => setShowEventModal(true)} />
             <Table
               columns={columns}
               data={properties?.ownerProperties}
