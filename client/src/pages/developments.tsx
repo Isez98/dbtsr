@@ -3,6 +3,7 @@ import router from 'next/router'
 import React, { useState } from 'react'
 import AddButton from '../components/AddButton'
 import EventModal from '../components/EventModal'
+import { Subjects } from '../components/EventModal/subjects'
 import Table from '../components/Table'
 import {
   useCreateDevelopmentMutation,
@@ -32,7 +33,7 @@ export const Developments = ({}) => {
       {showEventModal && (
         <EventModal
           className="z-20"
-          formType="Development"
+          formType={Subjects.AddDevelopment}
           modalTitle="Add Development"
           closeEvent={() => setShowEventModal(false)}
           onSubmit={async (values, { setErrors }) => {

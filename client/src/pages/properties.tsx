@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import AddButton from '../components/AddButton'
 import EventModal from '../components/EventModal'
+import { Subjects } from '../components/EventModal/subjects'
 import Table from '../components/Table'
 import {
   useCreateOwnerMutation,
@@ -35,7 +36,7 @@ export const Properties = ({}) => {
       {showEventModal && (
         <EventModal
           className="z-20"
-          formType="Property"
+          formType={Subjects.AddProperty}
           modalTitle="Add Property"
           closeEvent={() => setShowEventModal(false)}
           onSubmit={async (values, { setErrors }) => {

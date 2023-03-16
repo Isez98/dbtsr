@@ -5,10 +5,11 @@ import CalendarForm from './Forms/CalendarForm'
 import DevelopmentForm from './Forms/DevelopmentForm'
 import OwnerForm from './Forms/OwnerForm'
 import PropertyForm from './Forms/PropertyForm'
+import { Subjects } from './subjects'
 
 interface EventModalProps {
   className?: string
-  formType: 'Calendar' | 'Owner' | 'Development' | 'Property'
+  formType: Subjects
   closeEvent: () => void
   onSubmit: (values: any, { setErrors }: any) => Promise<void>
   modalTitle: string
@@ -25,13 +26,13 @@ export const EventModal: React.FC<EventModalProps> = ({
 }) => {
   function formDispatcher() {
     switch (formType) {
-      case 'Calendar':
+      case Subjects.Calendar:
         return <CalendarForm />
-      case 'Owner':
+      case Subjects.AddOwner:
         return <OwnerForm />
-      case 'Development':
+      case Subjects.AddDevelopment:
         return <DevelopmentForm />
-      case 'Property':
+      case Subjects.AddPropertyOwner:
         return <PropertyForm />
       default:
         return <></>

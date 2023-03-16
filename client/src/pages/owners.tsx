@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import AddButton from '../components/AddButton'
 import EventModal from '../components/EventModal'
+import { Subjects } from '../components/EventModal/subjects'
 import Table from '../components/Table'
 import { useCreateOwnerMutation, useOwnersQuery } from '../generated/graphql'
 import { createUrqlClient } from '../utils/createUrqlClient'
@@ -33,7 +34,7 @@ export const Owners = ({}) => {
       {showEventModal && (
         <EventModal
           className="z-20"
-          formType="Owner"
+          formType={Subjects.AddOwner}
           closeEvent={() => setShowEventModal(false)}
           modalTitle="Add Owner"
           onSubmit={async (values: any, { setErrors }: any) => {
