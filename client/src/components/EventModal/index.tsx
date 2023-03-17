@@ -5,6 +5,7 @@ import CalendarForm from './Forms/CalendarForm'
 import DevelopmentForm from './Forms/DevelopmentForm'
 import OwnerForm from './Forms/OwnerForm'
 import PropertyForm from './Forms/PropertyForm'
+import { PropertyOwnerForm } from './Forms/PropertyOwnerForm'
 import { Subjects } from './subjects'
 
 interface EventModalProps {
@@ -32,8 +33,10 @@ export const EventModal: React.FC<EventModalProps> = ({
         return <OwnerForm />
       case Subjects.AddDevelopment:
         return <DevelopmentForm />
-      case Subjects.AddPropertyOwner:
+      case Subjects.AddProperty:
         return <PropertyForm />
+      case Subjects.AddPropertyOwner:
+        return <PropertyOwnerForm />
       default:
         return <></>
     }
