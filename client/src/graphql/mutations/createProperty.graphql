@@ -1,0 +1,28 @@
+mutation CreateProperty(
+  $designation: String!
+  $developmentId: Float!
+  $ownerId: Float!
+  $album: String
+  $notes: String
+) {
+  createProperty(
+    input: {
+      designation: $designation
+      developmentId: $developmentId
+      ownerId: $ownerId
+      album: $album
+      notes: $notes
+    }
+  ) {
+    errors {
+      field
+      message
+    }
+    propertyRental {
+      id
+      designation
+      ownerId
+      developmentId
+    }
+  }
+}

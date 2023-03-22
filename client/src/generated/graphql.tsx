@@ -13,6 +13,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
+  DateTime: any;
 };
 
 export type DevelopmentInput = {
@@ -54,6 +56,7 @@ export type Mutation = {
   createDevelopment: DevelopmentResponse;
   createOwner: OwnerResponse;
   createProperty: PropertyRentalResponse;
+  createRent: RentResponse;
   deleteDevelopment: Scalars['Boolean'];
   deleteOWner: Scalars['Boolean'];
   deleteProperty: Scalars['Boolean'];
@@ -83,6 +86,11 @@ export type MutationCreateOwnerArgs = {
 
 export type MutationCreatePropertyArgs = {
   input: PropertyInput;
+};
+
+
+export type MutationCreateRentArgs = {
+  input: RentInput;
 };
 
 
@@ -183,6 +191,8 @@ export type Query = {
   owners: Array<Owner>;
   properties: Array<PropertyRental>;
   property?: Maybe<PropertyRental>;
+  rent?: Maybe<Rent>;
+  rents: Array<Rent>;
 };
 
 
@@ -232,6 +242,43 @@ export type QueryPropertyArgs = {
   id: Scalars['Int'];
 };
 
+
+export type QueryRentArgs = {
+  id: Scalars['Int'];
+};
+
+export type Rent = {
+  __typename?: 'Rent';
+  checkIn: Scalars['String'];
+  checkOut: Scalars['String'];
+  client: Scalars['String'];
+  createdAt: Scalars['String'];
+  id: Scalars['Int'];
+  notes: Scalars['String'];
+  people: Scalars['Int'];
+  propertyId: Scalars['Int'];
+  rate: Scalars['Float'];
+  updatedAt: Scalars['String'];
+  userId: Scalars['Int'];
+};
+
+export type RentInput = {
+  checkIn: Scalars['DateTime'];
+  checkOut: Scalars['DateTime'];
+  clientName: Scalars['String'];
+  notes: Scalars['String'];
+  people: Scalars['Float'];
+  propertyId: Scalars['Float'];
+  rate: Scalars['Float'];
+  userId: Scalars['Float'];
+};
+
+export type RentResponse = {
+  __typename?: 'RentResponse';
+  errors?: Maybe<Array<FieldError>>;
+  rent?: Maybe<Rent>;
+};
+
 export type User = {
   __typename?: 'User';
   createdAt: Scalars['String'];
@@ -277,6 +324,17 @@ export type CreateOwnerMutationVariables = Exact<{
 
 
 export type CreateOwnerMutation = { __typename?: 'Mutation', createOwner: { __typename?: 'OwnerResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, owner?: { __typename?: 'Owner', id: number, name: string, email: string, phone: string } | null } };
+
+export type CreatePropertyMutationVariables = Exact<{
+  designation: Scalars['String'];
+  developmentId: Scalars['Float'];
+  ownerId: Scalars['Float'];
+  album?: InputMaybe<Scalars['String']>;
+  notes?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type CreatePropertyMutation = { __typename?: 'Mutation', createProperty: { __typename?: 'PropertyRentalResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, propertyRental?: { __typename?: 'PropertyRental', id: number, designation: string, ownerId: number, developmentId: number } | null } };
 
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String'];
@@ -437,6 +495,28 @@ export const CreateOwnerDocument = gql`
 
 export function useCreateOwnerMutation() {
   return Urql.useMutation<CreateOwnerMutation, CreateOwnerMutationVariables>(CreateOwnerDocument);
+};
+export const CreatePropertyDocument = gql`
+    mutation CreateProperty($designation: String!, $developmentId: Float!, $ownerId: Float!, $album: String, $notes: String) {
+  createProperty(
+    input: {designation: $designation, developmentId: $developmentId, ownerId: $ownerId, album: $album, notes: $notes}
+  ) {
+    errors {
+      field
+      message
+    }
+    propertyRental {
+      id
+      designation
+      ownerId
+      developmentId
+    }
+  }
+}
+    `;
+
+export function useCreatePropertyMutation() {
+  return Urql.useMutation<CreatePropertyMutation, CreatePropertyMutationVariables>(CreatePropertyDocument);
 };
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($email: String!) {

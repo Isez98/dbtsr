@@ -5,8 +5,14 @@ import AddButton from '../../components/AddButton'
 import EventModal from '../../components/EventModal'
 import { Subjects } from '../../components/EventModal/subjects'
 import Table from '../../components/Table'
-import { useOwnerPropertiesQuery, useOwnerQuery } from '../../generated/graphql'
+import {
+  useCreatePropertyMutation,
+  useDevelopmentsQuery,
+  useOwnerPropertiesQuery,
+  useOwnerQuery,
+} from '../../generated/graphql'
 import { createUrqlClient } from '../../utils/createUrqlClient'
+import { toErrorMap } from '../../utils/toErrorMap'
 
 export const owner = ({}) => {
   const router = useRouter()
@@ -17,7 +23,10 @@ export const owner = ({}) => {
     variables: { id: Number(router.query.owner_id), limit: 10 },
   })
   const [showEventModal, setShowEventModal] = useState(false)
-
+  const [, createProperty] = useCreatePropertyMutation()
+  const [{ data: developments }] = useDevelopmentsQuery({
+    variables: { limit: 20 },
+  })
   const columns = [
     { title: 'ID', key: 'id' },
     { title: 'Designation', key: 'designation' },
@@ -57,11 +66,21 @@ export const owner = ({}) => {
           formType={Subjects.AddPropertyOwner}
           closeEvent={() => setShowEventModal(false)}
           modalTitle={`Add Property To ${owner?.owner?.name}`}
-          onSubmit={async (values: any, { setErrors }: any) => {}}
+          onSubmit={async (values: any, { setErrors }: any) => {
+            values.ownerId = Number(router.query.owner_id)
+            values.developmentId = Number(values.developmentId)
+            const response = await createProperty(values)
+            if (response.data?.createProperty.errors) {
+              setErrors(toErrorMap(response.data.createProperty.errors))
+            } else if (response.data?.createProperty.propertyRental) {
+              //   // works
+              setShowEventModal(false)
+            }
+          }}
           initialValues={{
-            ownerId: '',
+            ownerId: owner?.owner?.name,
             designation: '',
-            developmentId: '',
+            developmentId: developments?.developments[0].id,
             notes: '',
             album: '',
           }}

@@ -63,6 +63,7 @@ export const createUrqlClient = (ssrExchange: any) => ({
 
           createProperty: (_result, args, cache, info) => {
             invalidateQuery(cache, 'properties')
+            invalidateQuery(cache, 'ownerProperties')
           },
 
           register: (_result: LoginMutation, args, cache, info) => {
