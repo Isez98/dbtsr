@@ -71,7 +71,9 @@ export const owner = ({}) => {
             values.developmentId = Number(values.developmentId)
             const response = await createProperty(values)
             if (response.data?.createProperty.errors) {
+              values.ownerId = router.query.owner_id
               setErrors(toErrorMap(response.data.createProperty.errors))
+              console.log(toErrorMap(response.data.createProperty.errors))
             } else if (response.data?.createProperty.propertyRental) {
               //   // works
               setShowEventModal(false)

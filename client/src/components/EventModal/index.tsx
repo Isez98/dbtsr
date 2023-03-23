@@ -43,8 +43,8 @@ export const EventModal: React.FC<EventModalProps> = ({
   }
 
   return (
-    <div className={`relative ${className}`}>
-      <div className="absolute left-0 -top-96 w-full rounded-lg bg-white shadow-2xl md:left-24 md:-top-52 md:w-3/4 lg:-top-0 lg:left-1/4 lg:w-2/4">
+    <div className={`${className}`}>
+      <div className="absolute left-0 top-1/4 w-full rounded-lg bg-white shadow-2xl md:left-24 md:top-1/4 md:w-3/4 lg:top-1/4 lg:left-1/4 lg:h-max lg:w-2/4">
         <header className="flex items-center justify-between bg-gray-100 px-4 py-2">
           <span className="text-gray-400">
             <DragHandleIcon />
@@ -60,7 +60,7 @@ export const EventModal: React.FC<EventModalProps> = ({
           <Formik
             initialValues={initialValues}
             onSubmit={async (values, { setErrors }) =>
-              onSubmit(values, setErrors)
+              onSubmit(values, { setErrors })
             }
           >
             {formDispatcher}
