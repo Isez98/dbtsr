@@ -16,14 +16,15 @@ import { toErrorMap } from '../../utils/toErrorMap'
 
 export const owner = ({}) => {
   const router = useRouter()
+  const [showEventModal, setShowEventModal] = useState(false)
+  const [, createProperty] = useCreatePropertyMutation()
+  const [errors, setErrors] = useState<string | null>(null)
   const [{ data: owner }] = useOwnerQuery({
     variables: { id: Number(router.query.owner_id) },
   })
   const [{ data: properties }] = useOwnerPropertiesQuery({
     variables: { id: Number(router.query.owner_id), limit: 10 },
   })
-  const [showEventModal, setShowEventModal] = useState(false)
-  const [, createProperty] = useCreatePropertyMutation()
   const [{ data: developments }] = useDevelopmentsQuery({
     variables: { limit: 20 },
   })
@@ -64,21 +65,28 @@ export const owner = ({}) => {
         <EventModal
           className=""
           formType={Subjects.AddPropertyOwner}
-          closeEvent={() => setShowEventModal(false)}
+          closeEvent={() => {
+            setShowEventModal(false)
+            setErrors(null)
+          }}
           modalTitle={`Add Property To ${owner?.owner?.name}`}
-          onSubmit={async (values: any, { setErrors }: any) => {
-            values.ownerId = Number(router.query.owner_id)
-            values.developmentId = Number(values.developmentId)
-            const response = await createProperty(values)
+          onSubmit={async (values: any) => {
+            const response = await createProperty({
+              ownerId: Number(router.query.owner_id),
+              developmentId: Number(values.developmentId),
+              designation: values.designation,
+              notes: '',
+              album: '',
+            })
             if (response.data?.createProperty.errors) {
-              values.ownerId = router.query.owner_id
-              setErrors(toErrorMap(response.data.createProperty.errors))
-              console.log(toErrorMap(response.data.createProperty.errors))
+              setErrors(response.data.createProperty.errors[0].message)
             } else if (response.data?.createProperty.propertyRental) {
-              //   // works
+              // works
               setShowEventModal(false)
+              setErrors(null)
             }
           }}
+          errors={errors}
           initialValues={{
             ownerId: owner?.owner?.name,
             designation: '',

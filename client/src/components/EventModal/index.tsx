@@ -15,6 +15,7 @@ interface EventModalProps {
   onSubmit: (values: any, { setErrors }: any) => Promise<void>
   modalTitle: string
   initialValues: Object
+  errors: any
 }
 
 export const EventModal: React.FC<EventModalProps> = ({
@@ -23,6 +24,7 @@ export const EventModal: React.FC<EventModalProps> = ({
   modalTitle,
   closeEvent,
   onSubmit,
+  errors,
   initialValues,
 }) => {
   function formDispatcher() {
@@ -65,6 +67,9 @@ export const EventModal: React.FC<EventModalProps> = ({
           >
             {formDispatcher}
           </Formik>
+          {errors && (
+            <div className="mt-4 text-center italic text-red-600">{errors}</div>
+          )}
         </div>
         <footer className="mt-5 flex justify-end border-t p-3"></footer>
       </div>

@@ -17,6 +17,7 @@ export const PropertyOwnerForm: React.FC<PropertyOwnerFormProps> = ({}) => {
           name="ownerId"
           label="Owner"
           placeholder="Full Name"
+          type={'text'}
           required
           readOnly
           disabled
