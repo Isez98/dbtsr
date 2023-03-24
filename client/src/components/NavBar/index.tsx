@@ -1,28 +1,39 @@
-import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React, { useContext } from 'react'
-import { ArrowRightIcon } from '@chakra-ui/icons'
+import { ArrowRightIcon, ChevronLeftIcon } from '@chakra-ui/icons'
 import GlobalContext from '../../context/GlobalContext'
 import { useLogoutMutation } from '../../generated/graphql'
 import styles from './styles.module.scss'
+import { HamburgerMenu } from '../HamburgerMenu'
 
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = () => {
   const { size, setSize } = useContext(GlobalContext)
+  const router = useRouter()
   const [, logout] = useLogoutMutation()
 
   return (
     <div
       className={
-        'ml-auto flex w-full justify-between p-4 text-white ' + styles.navbar
+        'ml-auto flex w-full justify-between p-3 text-white lg:p-4 ' +
+        styles.navbar
       }
     >
-      {size === true ? (
-        <button onClick={() => setSize(!size)}>
-          <ArrowRightIcon />
+      <div className="flex">
+        {size === true ? (
+          <button className="hidden lg:flex" onClick={() => setSize(!size)}>
+            <ArrowRightIcon />
+          </button>
+        ) : null}
+        <HamburgerMenu />
+        <button
+          className="absolute top-0.5 ml-8 lg:-top-3 lg:ml-5"
+          onClick={() => router.back()}
+        >
+          <ChevronLeftIcon style={{ height: '38px', width: '38px' }} />
         </button>
-      ) : null}
-
+      </div>
       <div className="flex"></div>
       <span>
         <span className="mr-5">Profile</span>

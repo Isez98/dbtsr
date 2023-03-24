@@ -40,7 +40,7 @@
   -webkit-transition: width 1s, min-width 1s, max-width 1s;
 }
 
-@media screen and (max-width: 1200px) {
+@media screen and (max-width: 1030px) {
   .Navbar__Container {
     width: 0%;
     max-width: 0%;
