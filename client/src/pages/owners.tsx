@@ -60,6 +60,7 @@ export const Owners = ({}) => {
             }
           }}
           initialValues={{ name: '', email: '', phone: '' }}
+          errors={undefined}
         />
       )}
     </React.Fragment>

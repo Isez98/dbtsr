@@ -24,19 +24,23 @@ export const development = ({}) => {
   ]
 
   return (
-    <React.Fragment>
+    <div>
       <div className="flex justify-between">
         <h1>{`Name: ${developments?.development?.name}`}</h1>
         <span>
           <span>{`Location: ${developments?.development?.location}`}</span>
         </span>
       </div>
-      <br />
+      {/* <br /> */}
       <h3>Properties:</h3>
       <div className="mt-2">
         {properties ? (
           <>
-            <AddButton />
+            <AddButton
+              onClick={function (): void {
+                throw new Error('Function not implemented.')
+              }}
+            />
             <Table
               columns={columns}
               data={properties?.developmentProperties}
@@ -47,7 +51,7 @@ export const development = ({}) => {
           <>Nothing to see here...</>
         )}
       </div>
-    </React.Fragment>
+    </div>
   )
 }
 

@@ -20,7 +20,7 @@ export const Calendar: React.FC<CalendarProps> = ({}) => {
 
   return (
     <React.Fragment>
-      <div className="flex h-3/4 w-4/5 flex-col">
+      <div className="w-5/6- flex h-2/3 flex-col">
         <CalendarHeader />
         <div className="flex flex-1">
           <Sidebar />
@@ -36,6 +36,7 @@ export const Calendar: React.FC<CalendarProps> = ({}) => {
             setShowEventModal(false)
           }}
           initialValues={{}}
+          errors={undefined}
         />
       )}
     </React.Fragment>

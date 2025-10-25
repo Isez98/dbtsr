@@ -56,10 +56,8 @@ export class DevelopmentsResolver {
   }
 
   @Query(() => Developments, { nullable: true })
-  development(
-    @Arg("id", () => Int) id: number
-  ): Promise<Developments | undefined> {
-    return Developments.findOne(id);
+  development(@Arg("id", () => Int) id: number): Promise<Developments | null> {
+    return Developments.findOneBy({ id: id });
   }
 
   @Mutation(() => DevelopmentResponse)

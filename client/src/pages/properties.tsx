@@ -57,6 +57,7 @@ export const Properties = ({}) => {
             }
           }}
           initialValues={{ name: '', email: '', phone: '' }}
+          errors={undefined}
         />
       )}
     </React.Fragment>

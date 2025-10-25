@@ -20,7 +20,7 @@ export const Login: React.FC<LoginProps> = ({}) => {
       <Head>
         <title>Login</title>
       </Head>
-      <Wrapper variant="small">
+      <Wrapper variant="regular">
         <Formik
           initialValues={{ email: '', password: '' }}
           onSubmit={async (values, { setErrors }) => {
@@ -51,16 +51,16 @@ export const Login: React.FC<LoginProps> = ({}) => {
                     type="password"
                   />
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex justify-between items-center">
                   <button
-                    className="focus:shadow-outline rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none"
+                    className="px-4 py-2 font-bold text-white bg-blue-500 rounded focus:shadow-outline hover:bg-blue-700 focus:outline-none"
                     type="submit"
                     onClick={() => isSubmitting}
                   >
                     Login
                   </button>
                   <NextLink href="/forgot-password">
-                    <span className="inline-block cursor-pointer align-baseline text-sm font-bold text-blue-500 hover:text-blue-800">
+                    <span className="inline-block text-sm font-bold text-blue-500 align-baseline cursor-pointer hover:text-blue-800">
                       Forgot Password?
                     </span>
                   </NextLink>
@@ -69,7 +69,7 @@ export const Login: React.FC<LoginProps> = ({}) => {
             )
           }}
         </Formik>
-        <p className="mt-3 text-center text-xs text-gray-500">
+        <p className="mt-3 text-xs text-center text-gray-500">
           &copy;2020 Desert By The Sea Rentals. All rights reserved.
         </p>
       </Wrapper>

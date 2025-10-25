@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int } from 'type-graphql'
+import { ObjectType, Field, Int } from "type-graphql";
 import {
   Entity,
   Column,
@@ -8,54 +8,54 @@ import {
   BaseEntity,
   ManyToOne,
   OneToMany,
-} from 'typeorm'
-import { Owner } from './Owner'
-import { Rent } from './Rent'
-import { Developments } from './Developments'
+} from "typeorm";
+import { Owner } from "./Owner";
+import { Rent } from "./Rent";
+import { Developments } from "./Developments";
 
 @ObjectType()
 @Entity()
 export class PropertyRental extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
-  id!: number
+  id!: number;
 
   @Field()
   @Column()
-  designation!: string
+  designation!: string;
 
   @Field(() => String)
   @Column()
-  album: string
+  album: string;
 
   @Field(() => String)
-  @Column('text')
-  notes: string
+  @Column("text")
+  notes: string;
 
   @Field(() => Int)
   @Column()
-  developmentId: number
+  developmentId: number;
 
   @Field()
   @ManyToOne(() => Developments, (development) => development.properties)
-  development: Developments
+  development: Developments;
 
   @Field(() => Int)
   @Column()
-  ownerId: number
+  ownerId: number;
 
   @Field()
   @ManyToOne(() => Owner, (owner) => owner.properties)
-  owner: Owner
+  owner: Owner;
 
   @OneToMany(() => Rent, (rent) => rent.property)
-  rents: Rent[]
+  rents: Rent[];
 
   @Field(() => String)
   @CreateDateColumn()
-  createdAt: Date
+  createdAt: Date;
 
   @Field(() => String)
   @UpdateDateColumn()
-  updatedAt: Date
+  updatedAt: Date;
 }

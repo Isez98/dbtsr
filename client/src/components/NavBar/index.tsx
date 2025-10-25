@@ -36,7 +36,7 @@ export const NavBar: React.FC<NavBarProps> = () => {
         </button>
       </div>
       {/* <NavMenu pathList={['']} className="" /> */}
-      {/* 
+
       <span>
         <span className="mr-5">Profile</span>
         <button
@@ -46,7 +46,7 @@ export const NavBar: React.FC<NavBarProps> = () => {
         >
           Logout
         </button>
-      </span> */}
+      </span>
     </div>
   )
 }

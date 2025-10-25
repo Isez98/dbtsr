@@ -247,6 +247,12 @@ export type QueryRentArgs = {
   id: Scalars['Int'];
 };
 
+
+export type QueryRentsArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
+};
+
 export type Rent = {
   __typename?: 'Rent';
   checkIn: Scalars['String'];
@@ -424,6 +430,14 @@ export type PropertiesQueryVariables = Exact<{
 
 
 export type PropertiesQuery = { __typename?: 'Query', properties: Array<{ __typename?: 'PropertyRental', id: number, designation: string, ownerId: number, developmentId: number, album: string, notes: string, owner: { __typename?: 'Owner', name: string }, development: { __typename?: 'Developments', name: string } }> };
+
+export type RentsQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type RentsQuery = { __typename?: 'Query', rents: Array<{ __typename?: 'Rent', id: number, checkIn: string, checkOut: string, propertyId: number, rate: number, people: number, client: string }> };
 
 export const RegularErrorFragmentDoc = gql`
     fragment RegularError on FieldError {
@@ -688,4 +702,21 @@ export const PropertiesDocument = gql`
 
 export function usePropertiesQuery(options: Omit<Urql.UseQueryArgs<PropertiesQueryVariables>, 'query'>) {
   return Urql.useQuery<PropertiesQuery>({ query: PropertiesDocument, ...options });
+};
+export const RentsDocument = gql`
+    query Rents($limit: Int!, $cursor: String) {
+  rents(limit: $limit, cursor: $cursor) {
+    id
+    checkIn
+    checkOut
+    propertyId
+    rate
+    people
+    client
+  }
+}
+    `;
+
+export function useRentsQuery(options: Omit<Urql.UseQueryArgs<RentsQueryVariables>, 'query'>) {
+  return Urql.useQuery<RentsQuery>({ query: RentsDocument, ...options });
 };

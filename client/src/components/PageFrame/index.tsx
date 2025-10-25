@@ -8,7 +8,7 @@ import { BsBuildings, BsHouses, BsPeople, BsCalendarWeek } from 'react-icons/bs'
 import NavBar from '../NavBar'
 import SideMenu from '../SideMenu'
 
-interface PageFrameProps {
+interface PageFrameProps extends React.PropsWithChildren {
   title: string
 }
 
@@ -69,7 +69,10 @@ export const PageFrame: React.FC<PageFrameProps> = ({ children, title }) => {
                 }`}
               >
                 <NavBar />
-                <main className="justify-content-center h-95 container mb-5">
+                <main
+                  style={{ height: '90%' }}
+                  className="justify-content-center container"
+                >
                   {children}
                 </main>
                 <footer className="w-100 flex justify-center">

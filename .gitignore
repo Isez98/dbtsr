@@ -36,3 +36,6 @@ yarn-error.log*
 */dist
 **/mikro-orm.config.ts
 **/constants.ts
+
+# env
+.envrc

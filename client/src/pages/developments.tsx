@@ -59,6 +59,7 @@ export const Developments = ({}) => {
             }
           }}
           initialValues={{ name: '', location: '', logo: '' }}
+          errors={undefined}
         />
       )}
     </React.Fragment>

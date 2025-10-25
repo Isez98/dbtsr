@@ -56,8 +56,8 @@ export class OwnerResolver {
   }
 
   @Query(() => Owner, { nullable: true })
-  owner(@Arg("id", () => Int) id: number): Promise<Owner | undefined> {
-    return Owner.findOne(id);
+  owner(@Arg("id", () => Int) id: number): Promise<Owner | null> {
+    return Owner.findOneBy({ id: id });
   }
 
   @Mutation(() => OwnerResponse)

@@ -1,20 +1,15 @@
 import React, { useContext, useState } from 'react'
 import GlobalContext from '../../../../context/GlobalContext'
-import {
-  DragHandleIcon,
-  CloseIcon,
-  TimeIcon,
-  EditIcon,
-  AttachmentIcon,
-  CheckIcon,
-} from '@chakra-ui/icons'
+import { TimeIcon, EditIcon, AttachmentIcon, CheckIcon } from '@chakra-ui/icons'
 
 interface CalendarFormProps {}
 
 export const CalendarForm: React.FC<CalendarFormProps> = ({}) => {
-  const { setShowEventModal, daySelected } = useContext(GlobalContext)
+  const { daySelected } = useContext(GlobalContext)
   const [title, setTitle] = useState<string>('')
   const [description, setDescription] = useState<string>('')
+  const [checkIn, setCheckIn] = useState(daySelected.format('YYYY-MM-DD'))
+  const [checkOut, setCheckOut] = useState(daySelected.format('YYYY-MM-DD'))
   const labelsClasses = ['indigo', 'gray', 'green', 'blue', 'red', 'purple']
   const [selectedLabel, setSelectedLabel] = useState(labelsClasses[0])
 
@@ -35,7 +30,28 @@ export const CalendarForm: React.FC<CalendarFormProps> = ({}) => {
           <span className="text-gray-400">
             <TimeIcon />
           </span>
-          <p className="text-left">{daySelected.format('dddd, MMMM DD')}</p>
+          <div className="grid grid-cols-1/2 items-end gap-y-7">
+            <div className="flex flex-col pr-8">
+              <label htmlFor="check-in">Check-in</label>
+              <input
+                type="date"
+                name="check-in"
+                value={checkIn}
+                onChange={(e) => setCheckIn(e.target.value)}
+                required
+              />
+            </div>
+            <div className="flex flex-col pr-8">
+              <label htmlFor="check-out">Check-out</label>
+              <input
+                type="date"
+                name="check-out"
+                value={checkOut}
+                onChange={(e) => setCheckOut(e.target.value)}
+                required
+              />
+            </div>
+          </div>
           <span className="text-gray-400">
             <EditIcon className="mb-3" />
           </span>
