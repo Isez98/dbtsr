@@ -1,0 +1,64 @@
+{
+  "id": "form_v1",
+  "canvas_width": 1653,
+  "canvas_height": 2339,
+  "canonical_image": "templates/canonical_form_v1.png",
+  "rois": [
+    {
+      "name": "check_in",
+      "x": 343,
+      "y": 746,
+      "w": 304,
+      "h": 50,
+      "type": "date"
+    },
+    {
+      "name": "check_out",
+      "x": 899,
+      "y": 741,
+      "w": 287,
+      "h": 50,
+      "type": "date"
+    },
+    {
+      "name": "condominium",
+      "x": 935,
+      "y": 910,
+      "w": 235,
+      "h": 55,
+      "type": "text"
+    },
+    {
+      "name": "night_rate",
+      "x": 292,
+      "y": 1030,
+      "w": 279,
+      "h": 58,
+      "type": "currency"
+    },
+    {
+      "name": "guest_name",
+      "x": 487,
+      "y": 503,
+      "w": 454,
+      "h": 52,
+      "type": "text"
+    },
+    {
+      "name": "cleaning_fee",
+      "x": 449,
+      "y": 1090,
+      "w": 276,
+      "h": 50,
+      "type": "currency"
+    },
+    {
+      "name": "adults",
+      "x": 500,
+      "y": 677,
+      "w": 180,
+      "h": 50,
+      "type": "digits"
+    }
+  ]
+}

@@ -39,3 +39,7 @@ yarn-error.log*
 
 # env
 .envrc
+
+# assets
+/samples
+/ocr/templates/*.png

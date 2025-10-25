@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"strconv"
 	"strings"
 
@@ -94,33 +93,33 @@ func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst any
 	return nil
 }
 
-func (app *application) readString(qs url.Values, key string, defaultValue string) string {
-	s := qs.Get(key)
-	if s == "" {
-		return defaultValue
-	}
-	return s
-}
+// func (app *application) readString(qs url.Values, key string, defaultValue string) string {
+// 	s := qs.Get(key)
+// 	if s == "" {
+// 		return defaultValue
+// 	}
+// 	return s
+// }
 
-func (app *application) readCSV(qs url.Values, key string, defaultValue []string) []string {
-	csv := qs.Get(key)
-	if csv == "" {
-		return defaultValue
-	}
-	return strings.Split(csv, ",")
-}
+// func (app *application) readCSV(qs url.Values, key string, defaultValue []string) []string {
+// 	csv := qs.Get(key)
+// 	if csv == "" {
+// 		return defaultValue
+// 	}
+// 	return strings.Split(csv, ",")
+// }
 
-func (app *application) readInt(qs url.Values, key string, defaultValue int) (int, error) {
-	s := qs.Get(key)
-	if s == "" {
-		return defaultValue, nil
-	}
-	i, err := strconv.Atoi(s)
-	if err != nil {
-		return 0, err
-	}
-	return i, nil
-}
+// func (app *application) readInt(qs url.Values, key string, defaultValue int) (int, error) {
+// 	s := qs.Get(key)
+// 	if s == "" {
+// 		return defaultValue, nil
+// 	}
+// 	i, err := strconv.Atoi(s)
+// 	if err != nil {
+// 		return 0, err
+// 	}
+// 	return i, nil
+// }
 
 // var rgxEmail = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 

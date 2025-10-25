@@ -116,7 +116,7 @@ export default function SimpleTable<TData>({
                       }`}
                       onClick={hasOnClick ? () => column.onClick?.(row.original, cell.getValue()) : undefined}
                     >
-                      <div className="break-words">
+                      <div className="wrap-break-word">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </div>
                     </div>

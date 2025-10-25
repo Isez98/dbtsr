@@ -82,3 +82,8 @@ func (app *application) notPermittedResponse(w http.ResponseWriter, r *http.Requ
 	message := "You do not have permission to access this resource."
 	app.errorResponse(w, r, http.StatusForbidden, message)
 }
+
+func (app *application) clientErrorResponse(w http.ResponseWriter, r *http.Request) {
+	message := "The request could not be understood by the server due to malformed syntax."
+	app.errorResponse(w, r, http.StatusBadRequest, message)
+}
