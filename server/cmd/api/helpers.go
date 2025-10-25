@@ -7,12 +7,10 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"regexp"
 	"strconv"
 	"strings"
 
 	"dbtsr.isez.dev/internal/domain"
-	"dbtsr.isez.dev/internal/validator"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -124,17 +122,17 @@ func (app *application) readInt(qs url.Values, key string, defaultValue int) (in
 	return i, nil
 }
 
-var rgxEmail = regexp.MustCompile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
+// var rgxEmail = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 
-func validateEmail(v *validator.Validator, email string) {
-	if email == "" {
-		v.AddError("email", "must be provided")
-		return
-	}
-	if len(email) > 254 {
-		v.AddError("email", "must not be more than 254 characters long")
-	}
-	if !rgxEmail.MatchString(email) {
-		v.AddError("email", "must be a valid email address")
-	}
-}
+// func validateEmail(v *validator.Validator, email string) {
+// 	if email == "" {
+// 		v.AddError("email", "must be provided")
+// 		return
+// 	}
+// 	if len(email) > 254 {
+// 		v.AddError("email", "must not be more than 254 characters long")
+// 	}
+// 	if !rgxEmail.MatchString(email) {
+// 		v.AddError("email", "must be a valid email address")
+// 	}
+// }
