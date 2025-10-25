@@ -1,6 +1,0 @@
-query Development($id: Int!) {
-  development(id: $id) {
-    name
-    location
-  }
-}

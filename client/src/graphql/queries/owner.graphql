@@ -1,7 +1,0 @@
-query Owner($id: Int!) {
-  owner(id: $id) {
-    name
-    email
-    phone
-  }
-}
