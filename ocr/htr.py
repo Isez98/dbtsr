@@ -16,15 +16,10 @@ _large_model = None
 
 
 def get_device():
-  """Get the best available device (CUDA GPU, ROCm GPU, or CPU)"""
-  if torch.cuda.is_available():
-    device = torch.device("cuda")
-    print(f"Using GPU: {torch.cuda.get_device_name()}")
-    return device
-  else:
-    device = torch.device("cpu")
-    print("Using CPU - for better performance, install PyTorch with ROCm support")
-    return device
+  """Use CPU for now due to ROCm compatibility issues"""
+  device = torch.device("cpu")
+  print("Using CPU for stable operation (GPU available but disabled due to compatibility)")
+  return device
 
 
 def get_model(use_large=False):
@@ -36,7 +31,8 @@ def get_model(use_large=False):
       _large_processor = TrOCRProcessor.from_pretrained("microsoft/trocr-large-handwritten")
     if _large_model is None:
       _large_model = VisionEncoderDecoderModel.from_pretrained("microsoft/trocr-large-handwritten")
-      _large_model = _large_model.to(device)
+      if device.type == "cuda":
+        _large_model = _large_model.to(device)
       _large_model.eval()
       # Enable memory efficient attention if available
       if hasattr(_large_model.config, 'use_cache'):
@@ -47,7 +43,8 @@ def get_model(use_large=False):
       _processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten")
     if _model is None:
       _model = VisionEncoderDecoderModel.from_pretrained("microsoft/trocr-base-handwritten")
-      _model = _model.to(device)
+      if device.type == "cuda":
+        _model = _model.to(device)
       _model.eval()
       # Enable memory efficient attention if available
       if hasattr(_model.config, 'use_cache'):
@@ -146,19 +143,23 @@ def crop(img: np.ndarray, x: int, y: int, w: int, h: int) -> np.ndarray:
 
 
 def htr_read(pil_img: Image.Image, field_type: str = "text") -> Tuple[str, float]:
-  """Enhanced HTR with field-type specific processing and better confidence calculation"""
+  """Hybrid HTR: GPU for model inference, CPU for image processing"""
   
-  # Enhanced preprocessing
-  enhanced_img = enhance_image_for_htr(pil_img)
+  # Basic image preprocessing (CPU only to avoid ROCm conflicts)
+  if pil_img.mode != 'RGB':
+    pil_img = pil_img.convert('RGB')
   
-  # Try both base and large models for better accuracy
-  results = []
+  # Get model and processor
+  processor, model = get_model(use_large=False)
   
-  # Base model
   try:
-    processor, model = get_model(use_large=False)
+    # Process image on CPU (preprocessor handles this)
+    pixel_values = processor(images=pil_img, return_tensors="pt").pixel_values
+    
+    # Move to GPU only for model inference if available
     device = next(model.parameters()).device
-    pixel_values = processor(images=enhanced_img, return_tensors="pt").pixel_values.to(device)
+    if device.type == "cuda":
+      pixel_values = pixel_values.to(device)
     
     with torch.no_grad():
       # Generate with beam search for better results
@@ -170,53 +171,16 @@ def htr_read(pil_img: Image.Image, field_type: str = "text") -> Tuple[str, float
         do_sample=False
       )
       
-    text_base = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
-    results.append(("base", text_base))
-  except Exception as e:
-    print(f"Base model failed: {e}")
-    results.append(("base", ""))
-  
-  # For critical fields, also try preprocessing variations
-  if field_type in ["currency", "date", "digits"]:
-    # Try with different contrast enhancement
-    enhancer = ImageEnhance.Contrast(pil_img.convert('L'))
-    high_contrast = enhancer.enhance(2.0).convert('RGB')
+    text = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
     
-    try:
-      processor, model = get_model(use_large=False)
-      device = next(model.parameters()).device
-      pixel_values = processor(images=high_contrast, return_tensors="pt").pixel_values.to(device)
-      
-      with torch.no_grad():
-        generated_ids = model.generate(
-          pixel_values,
-          max_length=30,
-          num_beams=3,
-          early_stopping=True
-        )
-        
-      text_contrast = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
-      results.append(("contrast", text_contrast))
-    except Exception as e:
-      print(f"Contrast model failed: {e}")
-      results.append(("contrast", ""))
-  
-  # Choose best result based on field type and confidence heuristics
-  best_text = ""
-  best_confidence = 0.0
-  
-  for method, text in results:
-    if not text:
-      continue
-      
-    # Calculate confidence based on multiple factors
+    # Calculate basic confidence based on text characteristics
     confidence = calculate_confidence(text, field_type, pil_img.size)
     
-    if confidence > best_confidence:
-      best_text = text
-      best_confidence = confidence
-  
-  return best_text, best_confidence
+    return text, confidence
+    
+  except Exception as e:
+    print(f"HTR processing error: {e}")
+    return "", 0.0
 
 
 def calculate_confidence(text: str, field_type: str, image_size: tuple) -> float:
