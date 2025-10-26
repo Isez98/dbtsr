@@ -325,7 +325,7 @@ def snap_template_to_ink(
     image_path: str, 
     template: Dict, 
     preview_mode: bool = False,
-    enable_alignment: bool = True,
+    enable_alignment: bool = False,  # Changed default to False
     use_fiducials: bool = True,
     template_logos: List[np.ndarray] = None,
     keywords: List[str] = None

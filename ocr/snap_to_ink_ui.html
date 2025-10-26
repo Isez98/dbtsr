@@ -149,7 +149,7 @@
                 const formData = new FormData();
                 formData.append('template_id', templateId);
                 
-                const response = await fetch('/snap-to-ink', {
+                const response = await fetch('http://localhost:8001/snap-to-ink', {
                     method: 'POST',
                     body: formData
                 });

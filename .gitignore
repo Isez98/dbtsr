@@ -40,6 +40,10 @@ yarn-error.log*
 # env
 .envrc
 
+/__pycache__/
+*.pyc
+
 # assets
 /samples
 /ocr/templates/*.png
+/ocr/templates/*.backup
