@@ -2,11 +2,19 @@
 """
 Snap to ink auto-refine functionality for OCR template creation.
 Auto-tightens ROI boxes by detecting ink bounds and applying type-specific padding.
+Now includes enhanced alignment with fiducial markers and stable anchors.
 """
 
 import cv2
 import numpy as np
-from typing import Tuple, Dict, Optional
+from typing import Tuple, Dict, Optional, List
+try:
+    from alignment_utils import AlignmentEngine, FiducialMarkerDetector, StableAnchorDetector
+except ImportError:
+    # Fallback if alignment_utils is not available
+    AlignmentEngine = None
+    FiducialMarkerDetector = None
+    StableAnchorDetector = None
 
 
 def adaptive_threshold_and_morphology(roi_image: np.ndarray) -> np.ndarray:
@@ -115,6 +123,141 @@ def get_type_specific_padding(roi_type: str, canvas_width: int, canvas_height: i
         }
 
 
+def align_image_to_template(image: np.ndarray, 
+                           template: Dict,
+                           use_fiducials: bool = True,
+                           template_logos: List[np.ndarray] = None,
+                           keywords: List[str] = None) -> Optional[np.ndarray]:
+    """
+    Align input image to template using fiducial markers or stable anchors.
+    
+    Args:
+        image: Input image to align
+        template: Template dictionary with canonical reference points
+        use_fiducials: Whether to try fiducial marker alignment first
+        template_logos: Logo templates for anchor detection
+        keywords: Keywords for text anchor detection
+        
+    Returns:
+        Aligned image or None if alignment failed
+    """
+    if AlignmentEngine is None:
+        print("Warning: Enhanced alignment not available. Install alignment_utils.py")
+        return image
+    
+    # Extract canonical points from template
+    canonical_points = {}
+    
+    # Add fiducials if available
+    if 'fiducials' in template:
+        canonical_points['fiducials'] = template['fiducials']
+    
+    # Add anchor points if available
+    if 'anchors' in template:
+        canonical_points['anchors'] = template['anchors']
+    
+    # Initialize alignment engine
+    engine = AlignmentEngine()
+    
+    # Compute homography
+    homography = engine.compute_alignment_homography(
+        image, canonical_points, use_fiducials, template_logos, keywords
+    )
+    
+    if homography is None:
+        print("Warning: Could not compute alignment homography")
+        return None
+    
+    # Apply alignment
+    target_size = (template['canvas_width'], template['canvas_height'])
+    aligned_image = engine.apply_alignment(image, homography, target_size)
+    
+    return aligned_image
+
+
+def validate_alignment_quality(original_image: np.ndarray, 
+                             aligned_image: np.ndarray,
+                             template: Dict) -> Dict[str, float]:
+    """
+    Validate the quality of image alignment by checking ROI content.
+    
+    Args:
+        original_image: Original unaligned image
+        aligned_image: Aligned image
+        template: Template with ROI definitions
+        
+    Returns:
+        Dictionary with quality metrics
+    """
+    metrics = {
+        'ink_detection_score': 0.0,
+        'edge_alignment_score': 0.0,
+        'overall_quality': 0.0
+    }
+    
+    if aligned_image is None:
+        return metrics
+    
+    total_ink_original = 0
+    total_ink_aligned = 0
+    roi_count = 0
+    
+    for roi in template.get('rois', []):
+        x, y, w, h = roi['x'], roi['y'], roi['w'], roi['h']
+        
+        # Extract ROIs from both images
+        if (x + w <= original_image.shape[1] and y + h <= original_image.shape[0] and
+            x + w <= aligned_image.shape[1] and y + h <= aligned_image.shape[0]):
+            
+            original_roi = original_image[y:y+h, x:x+w]
+            aligned_roi = aligned_image[y:y+h, x:x+w]
+            
+            # Convert to grayscale if needed
+            if len(original_roi.shape) == 3:
+                original_roi = cv2.cvtColor(original_roi, cv2.COLOR_BGR2GRAY)
+            if len(aligned_roi.shape) == 3:
+                aligned_roi = cv2.cvtColor(aligned_roi, cv2.COLOR_BGR2GRAY)
+            
+            # Detect ink in both ROIs
+            orig_binary = adaptive_threshold_and_morphology(original_roi)
+            aligned_binary = adaptive_threshold_and_morphology(aligned_roi)
+            
+            # Count ink pixels
+            total_ink_original += np.sum(orig_binary > 0)
+            total_ink_aligned += np.sum(aligned_binary > 0)
+            roi_count += 1
+    
+    if roi_count > 0:
+        # Higher ink detection in aligned image suggests better alignment
+        if total_ink_original > 0:
+            metrics['ink_detection_score'] = min(1.0, total_ink_aligned / total_ink_original)
+        else:
+            metrics['ink_detection_score'] = 1.0 if total_ink_aligned > 0 else 0.0
+    
+    # Simple edge alignment check
+    if aligned_image is not None:
+        gray_aligned = cv2.cvtColor(aligned_image, cv2.COLOR_BGR2GRAY) if len(aligned_image.shape) == 3 else aligned_image
+        edges = cv2.Canny(gray_aligned, 50, 150)
+        
+        # Check if edges are well-aligned (simplified metric)
+        horizontal_edges = np.sum(edges, axis=1)
+        vertical_edges = np.sum(edges, axis=0)
+        
+        # Look for strong horizontal/vertical patterns
+        h_peaks = len([x for x in horizontal_edges if x > np.mean(horizontal_edges) + 2*np.std(horizontal_edges)])
+        v_peaks = len([x for x in vertical_edges if x > np.mean(vertical_edges) + 2*np.std(vertical_edges)])
+        
+        metrics['edge_alignment_score'] = min(1.0, (h_peaks + v_peaks) / 20.0)
+    
+    # Overall quality is weighted average
+    metrics['overall_quality'] = (
+        0.7 * metrics['ink_detection_score'] + 
+        0.3 * metrics['edge_alignment_score']
+    )
+    
+    return metrics
+
+
 def snap_roi_to_ink(
     original_image: np.ndarray, 
     roi: Dict, 
@@ -181,23 +324,65 @@ def snap_roi_to_ink(
 def snap_template_to_ink(
     image_path: str, 
     template: Dict, 
-    preview_mode: bool = False
+    preview_mode: bool = False,
+    enable_alignment: bool = True,
+    use_fiducials: bool = True,
+    template_logos: List[np.ndarray] = None,
+    keywords: List[str] = None
 ) -> Tuple[Dict, Optional[np.ndarray]]:
     """
     Auto-refine all ROIs in a template by snapping to ink bounds.
+    Now includes optional image alignment for perfect warp.
     
     Args:
-        image_path: Path to the canonical image
+        image_path: Path to the image to process
         template: Template dictionary with ROIs
         preview_mode: If True, return preview image with before/after boxes
+        enable_alignment: Whether to attempt image alignment first
+        use_fiducials: Whether to try fiducial marker alignment
+        template_logos: Logo templates for anchor detection
+        keywords: Keywords for text anchor detection
         
     Returns:
         Tuple of (refined_template, preview_image)
     """
     # Load image
-    image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-    if image is None:
+    original_image = cv2.imread(image_path, cv2.IMREAD_COLOR)
+    if original_image is None:
         raise ValueError(f"Could not load image: {image_path}")
+    
+    # Convert to grayscale for processing
+    image = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
+    
+    # Attempt alignment if enabled
+    aligned_image = None
+    alignment_quality = None
+    
+    if enable_alignment:
+        print("Attempting image alignment...")
+        aligned_image = align_image_to_template(
+            original_image, template, use_fiducials, template_logos, keywords
+        )
+        
+        if aligned_image is not None:
+            # Validate alignment quality
+            alignment_quality = validate_alignment_quality(
+                original_image, aligned_image, template
+            )
+            
+            print(f"Alignment quality: {alignment_quality['overall_quality']:.2f}")
+            print(f"  - Ink detection score: {alignment_quality['ink_detection_score']:.2f}")
+            print(f"  - Edge alignment score: {alignment_quality['edge_alignment_score']:.2f}")
+            
+            # Use aligned image if quality is good enough
+            if alignment_quality['overall_quality'] > 0.5:
+                print("Using aligned image for ROI refinement")
+                image = cv2.cvtColor(aligned_image, cv2.COLOR_BGR2GRAY)
+            else:
+                print("Alignment quality insufficient, using original image")
+                aligned_image = None
+        else:
+            print("Alignment failed, using original image")
     
     canvas_width = template["canvas_width"]
     canvas_height = template["canvas_height"]
@@ -246,13 +431,18 @@ def snap_template_to_ink(
     return refined_template, preview_image
 
 
-def apply_snap_to_ink_interactive(image_path: str, template_path: str) -> None:
+def apply_snap_to_ink_interactive(image_path: str, 
+                                template_path: str,
+                                enable_alignment: bool = True,
+                                use_fiducials: bool = True) -> None:
     """
-    Interactive tool to preview and apply snap-to-ink refinement.
+    Interactive tool to preview and apply snap-to-ink refinement with alignment.
     
     Args:
-        image_path: Path to canonical image
+        image_path: Path to image to process
         template_path: Path to template JSON file
+        enable_alignment: Whether to attempt image alignment
+        use_fiducials: Whether to prefer fiducial marker alignment
     """
     import json
     
@@ -265,7 +455,8 @@ def apply_snap_to_ink_interactive(image_path: str, template_path: str) -> None:
     # Generate preview
     try:
         refined_template, preview_image = snap_template_to_ink(
-            image_path, template, preview_mode=True
+            image_path, template, preview_mode=True,
+            enable_alignment=enable_alignment, use_fiducials=use_fiducials
         )
         
         # Show preview
@@ -311,12 +502,29 @@ def apply_snap_to_ink_interactive(image_path: str, template_path: str) -> None:
 if __name__ == "__main__":
     import sys
     
-    if len(sys.argv) != 3:
-        print("Usage: python snap_to_ink.py <image_path> <template_path>")
-        print("Example: python snap_to_ink.py templates/canonical_form_v1.png templates/form_v1.json")
+    if len(sys.argv) < 3:
+        print("Usage: python snap_to_ink.py <image_path> <template_path> [--no-alignment] [--no-fiducials]")
+        print("Example: python snap_to_ink.py sample_form.png templates/form_v1.json")
+        print("Options:")
+        print("  --no-alignment    Disable image alignment")
+        print("  --no-fiducials    Disable fiducial marker detection")
         sys.exit(1)
     
     image_path = sys.argv[1]
     template_path = sys.argv[2]
     
-    apply_snap_to_ink_interactive(image_path, template_path)
+    # Parse options
+    enable_alignment = '--no-alignment' not in sys.argv
+    use_fiducials = '--no-fiducials' not in sys.argv
+    
+    if enable_alignment:
+        print("Enhanced alignment enabled")
+        if use_fiducials:
+            print("  - Fiducial marker detection: ON")
+        else:
+            print("  - Fiducial marker detection: OFF")
+        print("  - Stable anchor detection: ON")
+    else:
+        print("Enhanced alignment disabled")
+    
+    apply_snap_to_ink_interactive(image_path, template_path, enable_alignment, use_fiducials)
