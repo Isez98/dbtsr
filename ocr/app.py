@@ -5,6 +5,7 @@ from PIL import Image
 import numpy as np
 import cv2
 from htr import align_to_canonical, deskew_and_binarize, crop, htr_read, postprocess
+from snap_to_ink import snap_template_to_ink, snap_roi_to_ink
 
 app = FastAPI()
 
@@ -128,3 +129,57 @@ async def process(template_id: str = Form(...), file: UploadFile = File(...)):
   "template_id": cfg["id"],
   "fields": results
  }
+
+@app.post("/snap-to-ink")
+async def snap_to_ink_endpoint(template_id: str = Form(...)):
+  """Apply snap-to-ink auto-refinement to an existing template"""
+  tpath = os.path.join(TEMPLATES_DIR, f"{template_id}.json")
+  if not os.path.exists(tpath):
+    return JSONResponse({"error": "unknown template"}, status_code=400)
+
+  cfg = json.load(open(tpath, "r", encoding="utf-8"))
+  canon_path = os.path.join(TEMPLATES_DIR, os.path.basename(cfg["canonical_image"]))
+  if not os.path.exists(canon_path):
+    return JSONResponse({"error": "missing canonical image"}, status_code=500)
+
+  try:
+    # Apply snap-to-ink refinement
+    refined_template, preview_image = snap_template_to_ink(
+      canon_path, cfg, preview_mode=True
+    )
+    
+    # Create backup of original
+    backup_path = tpath + '.backup'
+    with open(backup_path, 'w') as f:
+      json.dump(cfg, f, indent=2)
+    
+    # Save refined template
+    with open(tpath, 'w') as f:
+      json.dump(refined_template, f, indent=2)
+    
+    # Convert preview to base64
+    _, buffer = cv2.imencode('.png', preview_image)
+    preview_b64 = base64.b64encode(buffer).decode('utf-8')
+    
+    # Calculate changes summary
+    changes = []
+    for original, refined in zip(cfg["rois"], refined_template["rois"]):
+      if (original['x'] != refined['x'] or original['y'] != refined['y'] or
+          original['w'] != refined['w'] or original['h'] != refined['h']):
+        changes.append({
+          "name": original['name'],
+          "original": {"x": original['x'], "y": original['y'], "w": original['w'], "h": original['h']},
+          "refined": {"x": refined['x'], "y": refined['y'], "w": refined['w'], "h": refined['h']}
+        })
+    
+    return {
+      "template_id": cfg["id"],
+      "backup_created": backup_path,
+      "total_rois": len(cfg["rois"]),
+      "rois_changed": len(changes),
+      "changes": changes,
+      "preview_image_b64": preview_b64
+    }
+    
+  except Exception as e:
+    return JSONResponse({"error": str(e)}, status_code=500)

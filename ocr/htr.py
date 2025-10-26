@@ -16,10 +16,16 @@ _large_model = None
 
 
 def get_device():
-  """Use CPU for now due to ROCm compatibility issues"""
-  device = torch.device("cpu")
-  print("Using CPU for stable operation (GPU available but disabled due to compatibility)")
-  return device
+  """Use GPU if available (ROCm for AMD), fallback to CPU"""
+  if torch.cuda.is_available():
+    device = torch.device("cuda")
+    gpu_name = torch.cuda.get_device_name(0) if torch.cuda.is_available() else "Unknown"
+    print(f"Using GPU: {gpu_name}")
+    return device
+  else:
+    device = torch.device("cpu")
+    print("Using CPU (GPU not available)")
+    return device
 
 
 def get_model(use_large=False):

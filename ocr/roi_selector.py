@@ -8,6 +8,7 @@ import cv2
 import json
 import sys
 import os
+from snap_to_ink import snap_roi_to_ink, snap_template_to_ink
 
 class ROISelector:
     def __init__(self, image_path):
@@ -74,7 +75,7 @@ class ROISelector:
             print("Skipping ROI (no name provided)")
             return
             
-        print("Available types: text, digits, currency, date")
+        print("Available types: text, digits, currency, date, phone")
         roi_type = input("Enter ROI type [text]: ").strip() or "text"
         
         roi = {
@@ -85,6 +86,27 @@ class ROISelector:
             "h": h,
             "type": roi_type
         }
+        
+        # Ask if user wants to apply snap-to-ink auto-refine
+        snap_choice = input("Apply snap-to-ink auto-refine? [y/N]: ").strip().lower()
+        if snap_choice in ['y', 'yes']:
+            try:
+                # Convert to grayscale for processing
+                gray_image = cv2.cvtColor(self.original_image, cv2.COLOR_BGR2GRAY)
+                refined_roi = snap_roi_to_ink(gray_image, roi, self.original_width, self.original_height)
+                
+                print(f"Original: x={roi['x']}, y={roi['y']}, w={roi['w']}, h={roi['h']}")
+                print(f"Refined:  x={refined_roi['x']}, y={refined_roi['y']}, w={refined_roi['w']}, h={refined_roi['h']}")
+                
+                use_refined = input("Use refined coordinates? [Y/n]: ").strip().lower()
+                if use_refined not in ['n', 'no']:
+                    roi = refined_roi
+                    print("Using refined coordinates")
+                else:
+                    print("Using original coordinates")
+            except Exception as e:
+                print(f"Error during snap-to-ink refinement: {e}")
+                print("Using original coordinates")
         
         self.rois.append(roi)
         print(f"Added ROI: {roi}")
@@ -118,6 +140,45 @@ class ROISelector:
         else:
             print("No ROIs to remove")
     
+    def apply_snap_to_ink_all(self):
+        """Apply snap-to-ink refinement to all existing ROIs"""
+        if not self.rois:
+            print("No ROIs to refine")
+            return
+        
+        print(f"\n--- Applying snap-to-ink to {len(self.rois)} ROIs ---")
+        
+        try:
+            # Convert to grayscale for processing
+            gray_image = cv2.cvtColor(self.original_image, cv2.COLOR_BGR2GRAY)
+            
+            refined_rois = []
+            for i, roi in enumerate(self.rois):
+                print(f"Processing ROI {i+1}: {roi['name']}")
+                refined_roi = snap_roi_to_ink(gray_image, roi, self.original_width, self.original_height)
+                
+                # Show changes
+                if (roi['x'] != refined_roi['x'] or roi['y'] != refined_roi['y'] or 
+                    roi['w'] != refined_roi['w'] or roi['h'] != refined_roi['h']):
+                    print(f"  Original: x={roi['x']}, y={roi['y']}, w={roi['w']}, h={roi['h']}")
+                    print(f"  Refined:  x={refined_roi['x']}, y={refined_roi['y']}, w={refined_roi['w']}, h={refined_roi['h']}")
+                else:
+                    print(f"  No change needed")
+                
+                refined_rois.append(refined_roi)
+            
+            # Ask for confirmation
+            apply_choice = input(f"\nApply refinements to all {len(self.rois)} ROIs? [Y/n]: ").strip().lower()
+            if apply_choice not in ['n', 'no']:
+                self.rois = refined_rois
+                self.update_display()
+                print("All ROIs refined successfully")
+            else:
+                print("Refinements not applied")
+                
+        except Exception as e:
+            print(f"Error during batch snap-to-ink refinement: {e}")
+    
     def save_template(self, template_id):
         template = {
             "id": template_id,
@@ -145,6 +206,7 @@ class ROISelector:
         print("Instructions:")
         print("- Click and drag to create ROI rectangles")
         print("- Press 'u' to undo last ROI")
+        print("- Press 'a' to apply snap-to-ink to all ROIs")
         print("- Press 's' to save template")
         print("- Press 'q' to quit")
         print("- Press 'r' to refresh display")
@@ -156,6 +218,8 @@ class ROISelector:
                 break
             elif key == ord('u'):
                 self.remove_last_roi()
+            elif key == ord('a'):
+                self.apply_snap_to_ink_all()
             elif key == ord('s'):
                 template_id = input("\nEnter template ID: ").strip()
                 if template_id:
